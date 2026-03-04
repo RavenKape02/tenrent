@@ -12,24 +12,6 @@ const heroArchImage2 =
 const heroArchImage3 =
   "https://www.figma.com/api/mcp/asset/d26c6d7b-1ca3-4c13-a783-9cb767ad10a1";
 
-// Listing images
-const listingImage =
-  "https://www.figma.com/api/mcp/asset/92928cbf-c2d5-4fc0-b76d-e0477b83c28b";
-const agentAvatar =
-  "https://www.figma.com/api/mcp/asset/c69de2a6-93b0-475c-a6d9-c577666abb28";
-
-// Apartment type images
-const deluxeImage =
-  "https://www.figma.com/api/mcp/asset/73d463c1-a4e3-4722-93ca-fc0b23e91418";
-const doubleHeightImage =
-  "https://www.figma.com/api/mcp/asset/47069225-29cf-452d-a5a7-5e59729fb1d9";
-const studioImage =
-  "https://www.figma.com/api/mcp/asset/ca2bfa64-3d3e-44f3-888e-4c08656f6ac5";
-
-// Dream apartment section
-const dreamApartmentImage =
-  "https://www.figma.com/api/mcp/asset/da28cf0d-7a13-46d2-826d-8b50d8720325";
-
 export default function Home() {
   return (
     <div className="min-h-screen bg-white font-sans">
@@ -52,11 +34,17 @@ export default function Home() {
               Home
             </a>
             <a href="#" className="text-white text-lg hover:underline">
-              Leases
+              Browse Listings
             </a>
             <a href="#" className="text-white text-lg hover:underline">
-              About
+              How It Works
             </a>
+            <button className="bg-white text-[#0fa8e2] px-6 py-2 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
+              Sign In
+            </button>
+            <button className="bg-[#ff214f] text-white px-6 py-2 rounded-lg font-semibold hover:bg-[#e01d45] transition-colors">
+              Sign Up
+            </button>
           </nav>
           <button className="text-white md:hidden">
             <svg
@@ -85,33 +73,38 @@ export default function Home() {
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-6 h-[2px] bg-gray-500"></div>
                 <span className="text-gray-500 text-lg">
-                  Let&apos;s find yours Dream..
+                  Win your dream rental
                 </span>
               </div>
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-semibold text-white leading-tight mb-8">
-                Building award
+                Bid for Priority Access
                 <br />
-                winning properties across
+                to Premium Rentals
                 <br />
-                London UK and the All world
+                Through Transparent Competition
               </h1>
-              <button className="flex items-center gap-3 border-2 border-[#ff214f] text-[#ff214f] rounded-full px-8 py-4 hover:bg-[#ff214f] hover:text-white transition-colors">
-                <span className="text-lg">Create listing</span>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M17 8l4 4m0 0l-4 4m4-4H3"
-                  />
-                </svg>
-              </button>
+              <div className="flex flex-col sm:flex-row gap-4">
+                <button className="flex items-center justify-center gap-3 bg-[#ff214f] text-white rounded-full px-8 py-4 hover:bg-[#e01d45] transition-colors">
+                  <span className="text-lg">Browse Properties</span>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M17 8l4 4m0 0l-4 4m4-4H3"
+                    />
+                  </svg>
+                </button>
+                <button className="flex items-center justify-center gap-3 border-2 border-white text-white rounded-full px-8 py-4 hover:bg-white hover:text-[#090a0c] transition-colors">
+                  <span className="text-lg">List Your Property</span>
+                </button>
+              </div>
             </div>
 
             {/* Hero Images Grid */}
@@ -195,28 +188,62 @@ export default function Home() {
           <div className="max-w-7xl mx-auto px-6 md:px-24">
             <div className="text-center mb-8">
               <h2 className="text-2xl md:text-4xl text-white font-light">
-                HI, What do you want to your
-                <br />
-                <span className="text-[#ff214f]">Dream Apartment</span>
+                How It Works
               </h2>
               <p className="text-gray-400 mt-4">
-                Select a Apartment type below to begins
+                Three simple steps to win your dream rental
               </p>
+            </div>
+
+            {/* How It Works Steps */}
+            <div className="grid md:grid-cols-3 gap-8 mt-12">
+              <div className="text-center">
+                <div className="w-20 h-20 mx-auto mb-4 bg-[#ff214f] rounded-full flex items-center justify-center">
+                  <span className="text-white text-3xl font-bold">1</span>
+                </div>
+                <h3 className="text-xl text-white font-semibold mb-2">
+                  Browse Listings
+                </h3>
+                <p className="text-gray-400">
+                  Explore available properties with active bidding windows
+                </p>
+              </div>
+              <div className="text-center">
+                <div className="w-20 h-20 mx-auto mb-4 bg-[#ff214f] rounded-full flex items-center justify-center">
+                  <span className="text-white text-3xl font-bold">2</span>
+                </div>
+                <h3 className="text-xl text-white font-semibold mb-2">
+                  Place Your Bid
+                </h3>
+                <p className="text-gray-400">
+                  Offer a premium for priority consideration
+                </p>
+              </div>
+              <div className="text-center">
+                <div className="w-20 h-20 mx-auto mb-4 bg-[#ff214f] rounded-full flex items-center justify-center">
+                  <span className="text-white text-3xl font-bold">3</span>
+                </div>
+                <h3 className="text-xl text-white font-semibold mb-2">
+                  Win & Apply
+                </h3>
+                <p className="text-gray-400">
+                  Highest bidder gets exclusive first access
+                </p>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Lease Houses Section */}
+      {/* Active Auctions Section */}
       <section className="bg-[#14395b] py-16 md:py-24">
         <div className="max-w-7xl mx-auto px-6 md:px-24">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-semibold text-white mb-4">
-              Lease Houses
+              Active Auctions
             </h2>
             <p className="text-gray-300 max-w-2xl mx-auto">
-              The Most frequently searched and most popular apartment of the
-              application will be in the list
+              Properties accepting bids right now. Place your bid before time runs out!
             </p>
           </div>
 
@@ -236,103 +263,134 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Buy Dream Apartment Section */}
-      <section className="bg-white py-16 md:py-24">
-        <div className="max-w-7xl mx-auto px-6 md:px-24">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
-            <div>
-              <h2 className="text-4xl md:text-5xl font-bold text-[#186aa5] leading-tight mb-8">
-                Buy
-                <br />
-                Dream Apartment
-                <br />
-                In Prime location
-              </h2>
-              <button className="bg-[#14395b] text-white px-10 py-5 rounded-2xl text-xl hover:bg-[#0d2a42] transition-colors shadow-md">
-                See All Apartment
-              </button>
-            </div>
-            <div className="relative">
-              <div className="rounded-3xl overflow-hidden shadow-xl">
-                <Image
-                  src={dreamApartmentImage}
-                  alt="Dream Apartment"
-                  width={860}
-                  height={550}
-                  className="w-full h-auto object-cover"
-                  unoptimized
-                />
-              </div>
-              {/* Play button overlay */}
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-24 h-24 bg-white/80 rounded-full flex items-center justify-center cursor-pointer hover:bg-white transition-colors">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-10 w-10 text-[#186aa5] ml-1"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path d="M8 5v14l11-7z" />
-                </svg>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Apartment Types Section */}
+      {/* Why Choose TenRent Section */}
       <section className="bg-white py-16 md:py-24">
         <div className="max-w-7xl mx-auto px-6 md:px-24">
           <div className="text-center mb-12">
-            <h2 className="text-2xl md:text-3xl font-medium text-gray-800 mb-2">
-              HI, What do you want to your dream Apartment
+            <h2 className="text-3xl md:text-4xl font-bold text-[#186aa5] mb-4">
+              Why Choose TenRent?
             </h2>
-            <p className="text-gray-500">
-              Select a Apartment type below to begins
+            <p className="text-gray-600 max-w-2xl mx-auto">
+              A transparent and fair marketplace for competitive rental markets
             </p>
           </div>
 
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-            <ApartmentTypeCard image={deluxeImage} title="Deluxe Portion" />
-            <ApartmentTypeCard
-              image={doubleHeightImage}
-              title="Double Height"
-            />
-            <ApartmentTypeCard image={deluxeImage} title="Penthouse" />
-            <ApartmentTypeCard image={studioImage} title="The Studio" />
+          <div className="grid md:grid-cols-3 gap-8">
+            <div className="text-center p-6">
+              <div className="w-20 h-20 mx-auto mb-4 bg-[#186aa5] rounded-full flex items-center justify-center">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-10 w-10 text-white"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                Transparent Pricing
+              </h3>
+              <p className="text-gray-600">
+                See exactly what others are willing to pay. No hidden fees or surprises.
+              </p>
+            </div>
+
+            <div className="text-center p-6">
+              <div className="w-20 h-20 mx-auto mb-4 bg-[#186aa5] rounded-full flex items-center justify-center">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-10 w-10 text-white"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+                  />
+                </svg>
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                Fair Competition
+              </h3>
+              <p className="text-gray-600">
+                Everyone gets an equal shot at their dream place. May the best bid win.
+              </p>
+            </div>
+
+            <div className="text-center p-6">
+              <div className="w-20 h-20 mx-auto mb-4 bg-[#186aa5] rounded-full flex items-center justify-center">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-10 w-10 text-white"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                  />
+                </svg>
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                Secure Payments
+              </h3>
+              <p className="text-gray-600">
+                Funds held safely until bidding ends. Full refund if you don't win.
+              </p>
+            </div>
           </div>
 
-          {/* Pagination dots */}
-          <div className="flex justify-center mt-8 gap-2">
-            <div className="w-2 h-2 rounded-full bg-gray-800"></div>
-            <div className="w-2 h-2 rounded-full bg-gray-300"></div>
-            <div className="w-2 h-2 rounded-full bg-gray-300"></div>
+          <div className="text-center mt-12">
+            <button className="bg-[#14395b] text-white px-10 py-5 rounded-2xl text-xl hover:bg-[#0d2a42] transition-colors shadow-md">
+              Get Started Today
+            </button>
           </div>
         </div>
       </section>
 
-      {/* Featured Listings Section */}
+      {/* Landlord CTA Section */}
       <section className="bg-[#14395b] py-16 md:py-24">
         <div className="max-w-7xl mx-auto px-6 md:px-24">
-          <div className="text-center mb-12">
-            <p className="text-white/70 text-lg mb-2">Apartments</p>
-            <h2 className="text-3xl md:text-4xl font-semibold text-white">
-              Featured Listings
+          <div className="text-center mb-8">
+            <h2 className="text-3xl md:text-4xl font-semibold text-white mb-4">
+              Are You a Property Owner?
             </h2>
+            <p className="text-gray-300 max-w-2xl mx-auto text-lg">
+              List your property and let renters compete for it. Discover the true market value.
+            </p>
           </div>
 
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-            <FeatureCard icon={<ParkingIcon />} title="Parking Space" />
-            <FeatureCard icon={<SwimmingIcon />} title="Swimming Poll" />
-            <FeatureCard
-              icon={<SecurityIcon />}
-              title="Private Security"
-              active
-            />
-            <FeatureCard icon={<MedicalIcon />} title="Medical Center" />
-            <FeatureCard icon={<LibraryIcon />} title="Library Area" />
-            <FeatureCard icon={<BedIcon />} title="King Size Beds" />
-            <FeatureCard icon={<SmartHomeIcon />} title="Smart Home" />
-            <FeatureCard icon={<PlaygroundIcon />} title="Kids Playland" />
+          <div className="grid md:grid-cols-3 gap-6 mt-12">
+            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 text-center">
+              <div className="text-4xl font-bold text-white mb-2">$250</div>
+              <p className="text-gray-300">Average Premium Earned</p>
+            </div>
+            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 text-center">
+              <div className="text-4xl font-bold text-white mb-2">7 Days</div>
+              <p className="text-gray-300">Typical Bidding Window</p>
+            </div>
+            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 text-center">
+              <div className="text-4xl font-bold text-white mb-2">85%</div>
+              <p className="text-gray-300">You Keep of Premium</p>
+            </div>
+          </div>
+
+          <div className="text-center mt-10">
+            <button className="bg-[#ff214f] text-white px-10 py-5 rounded-2xl text-xl font-semibold hover:bg-[#e01d45] transition-colors shadow-lg">
+              List Your Property
+            </button>
           </div>
         </div>
       </section>
@@ -345,16 +403,16 @@ export default function Home() {
             <div>
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-11 h-11 bg-white rounded-lg flex items-center justify-center">
-                  <span className="text-[#0d2135] font-bold text-xl">L</span>
+                  <span className="text-[#0fa8e2] font-bold text-xl">T</span>
                 </div>
                 <span className="text-white font-semibold text-xl">
-                  Lease Property
+                  TenRent
                 </span>
               </div>
               <p className="text-gray-400 text-sm mb-6">
-                The most beautiful exclusive
+                Transparent bidding marketplace
                 <br />
-                properties and luxury apartments
+                for competitive rental markets
               </p>
               <div className="flex gap-3">
                 <SocialButton icon="facebook" />
@@ -412,6 +470,14 @@ export default function Home() {
                     href="#"
                     className="text-gray-400 hover:text-white text-sm"
                   >
+                    How Bidding Works
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#"
+                    className="text-gray-400 hover:text-white text-sm"
+                  >
                     Term & Condition
                   </a>
                 </li>
@@ -420,15 +486,7 @@ export default function Home() {
                     href="#"
                     className="text-gray-400 hover:text-white text-sm"
                   >
-                    Policy
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    className="text-gray-400 hover:text-white text-sm"
-                  >
-                    Privacy
+                    Privacy Policy
                   </a>
                 </li>
               </ul>
@@ -449,7 +507,7 @@ export default function Home() {
           {/* Copyright Bar */}
           <div className="border-t border-gray-700 pt-6 flex flex-col md:flex-row justify-between items-center">
             <p className="text-gray-400 text-sm">
-              © Copyright 2022, mordenhomes.com
+              © Copyright 2026, TenRent.com
             </p>
             <p className="text-gray-400 text-sm mt-4 md:mt-0">
               Terms & Condition | Privacy Policy
@@ -464,7 +522,7 @@ export default function Home() {
 // Property Card Component
 function PropertyCard() {
   return (
-    <div className="bg-white rounded-2xl overflow-hidden shadow-lg">
+    <div className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-shadow">
       <div className="relative">
         <Image
           src="https://www.figma.com/api/mcp/asset/92928cbf-c2d5-4fc0-b76d-e0477b83c28b"
@@ -474,19 +532,26 @@ function PropertyCard() {
           className="w-full h-48 object-cover"
           unoptimized
         />
-        <span className="absolute top-3 left-3 bg-green-500 text-white text-xs px-3 py-1 rounded uppercase">
+        <span className="absolute top-3 left-3 bg-green-500 text-white text-xs px-3 py-1 rounded uppercase font-semibold">
           Accepting Bids
         </span>
-        <div className="absolute bottom-3 right-3 w-10 h-10 rounded-full overflow-hidden border-2 border-white">
-          <Image
-            src="https://www.figma.com/api/mcp/asset/c69de2a6-93b0-475c-a6d9-c577666abb28"
-            alt="Agent"
-            width={40}
-            height={40}
-            className="w-full h-full object-cover"
-            unoptimized
-          />
-        </div>
+        {/* Heart/Save Icon */}
+        <button className="absolute top-3 right-3 w-10 h-10 bg-white rounded-full flex items-center justify-center hover:bg-gray-100 transition-colors">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-5 w-5 text-gray-600"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+            />
+          </svg>
+        </button>
       </div>
       <div className="p-5">
         <div className="flex items-center gap-2 text-gray-500 text-sm mb-2">
@@ -512,13 +577,45 @@ function PropertyCard() {
           </svg>
           <span>Knightsbridge</span>
         </div>
-        <div className="flex justify-between items-start mb-2 gap-2">
-          <h3 className="font-bold text-gray-900">Apartment London</h3>
-          <div className="text-right flex-shrink-0">
-            <span className="text-gray-500 text-xs">Tenrent fee :</span>
-            <span className="text-blue-600 font-bold ml-1">$500</span>
+        <h3 className="font-bold text-gray-900 mb-3">Apartment London</h3>
+        
+        {/* Bidding Information */}
+        <div className="bg-blue-50 rounded-lg p-3 mb-3">
+          <div className="flex justify-between items-center mb-2">
+            <span className="text-xs text-gray-600">Base Rent:</span>
+            <span className="text-sm font-semibold text-gray-900">$1,500/mo</span>
+          </div>
+          <div className="flex justify-between items-center mb-2">
+            <span className="text-xs text-gray-600">High Bid:</span>
+            <span className="text-lg font-bold text-[#ff214f]">+$200</span>
+          </div>
+          <div className="border-t border-blue-200 pt-2 mt-2">
+            <div className="flex justify-between items-center">
+              <span className="text-xs text-gray-600">Total:</span>
+              <span className="text-base font-bold text-blue-600">$1,700/mo</span>
+            </div>
           </div>
         </div>
+
+        {/* Countdown Timer */}
+        <div className="flex items-center gap-2 mb-3 text-orange-600 bg-orange-50 px-3 py-2 rounded">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-4 w-4"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
+          <span className="text-sm font-semibold">Ends in: 2d 14h</span>
+        </div>
+
         <p className="text-gray-500 text-xs mb-4 line-clamp-2">
           Beautiful Huge 1 family House in heart of westbury newly Renovated
           With New Furniture
@@ -538,66 +635,11 @@ function PropertyCard() {
               <p className="text-gray-500 text-[10px]">squre ft</p>
             </div>
           </div>
-          <button className="bg-[#14395b] text-white px-4 py-2 rounded flex items-center justify-center gap-2 hover:bg-[#0d2a42] transition-colors w-full">
-            <span className="text-xs">Place Bid</span>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-4 w-4"
-              fill="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path d="M17.5 3A2.5 2.5 0 0 1 20 5.5v.5h1a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-1v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-9H3a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h1v-.5A2.5 2.5 0 0 1 6.5 3h11zM18 10H6v9h12v-9zm2-2V7H4v1h16zM6.5 5a.5.5 0 0 0-.5.5V6h12v-.5a.5.5 0 0 0-.5-.5h-11z" />
-            </svg>
+          <button className="bg-[#14395b] text-white px-4 py-3 rounded-lg hover:bg-[#0d2a42] transition-colors w-full font-semibold">
+            View & Bid
           </button>
         </div>
       </div>
-    </div>
-  );
-}
-
-// Apartment Type Card Component
-function ApartmentTypeCard({ image, title }: { image: string; title: string }) {
-  return (
-    <div className="bg-white rounded-3xl p-4 shadow-md hover:shadow-xl transition-shadow cursor-pointer">
-      <div className="rounded-2xl overflow-hidden mb-4">
-        <Image
-          src={image}
-          alt={title}
-          width={316}
-          height={224}
-          className="w-full h-40 object-cover"
-          unoptimized
-        />
-      </div>
-      <p className="text-center text-gray-500 text-lg">{title}</p>
-    </div>
-  );
-}
-
-// Feature Card Component
-function FeatureCard({
-  icon,
-  title,
-  active = false,
-}: {
-  icon: React.ReactNode;
-  title: string;
-  active?: boolean;
-}) {
-  return (
-    <div
-      className={`rounded-xl p-6 text-center ${active ? "bg-[#186aa5]" : "bg-white"} transition-colors cursor-pointer hover:bg-[#186aa5] group`}
-    >
-      <div
-        className={`w-20 h-20 mx-auto mb-4 flex items-center justify-center ${active ? "text-white" : "text-[#14395b] group-hover:text-white"}`}
-      >
-        {icon}
-      </div>
-      <p
-        className={`font-medium ${active ? "text-white" : "text-gray-700 group-hover:text-white"}`}
-      >
-        {title}
-      </p>
     </div>
   );
 }
@@ -643,70 +685,5 @@ function SocialButton({ icon }: { icon: string }) {
         </svg>
       )}
     </div>
-  );
-}
-
-// Icons for Feature Cards
-function ParkingIcon() {
-  return (
-    <svg className="w-14 h-14" fill="currentColor" viewBox="0 0 24 24">
-      <path d="M13 3H6v18h4v-6h3c3.31 0 6-2.69 6-6s-2.69-6-6-6zm.2 8H10V7h3.2c1.1 0 2 .9 2 2s-.9 2-2 2z" />
-    </svg>
-  );
-}
-
-function SwimmingIcon() {
-  return (
-    <svg className="w-14 h-14" fill="currentColor" viewBox="0 0 24 24">
-      <path d="M22 21c-1.11 0-1.73-.37-2.18-.64-.37-.22-.6-.36-1.15-.36-.56 0-.78.13-1.15.36-.46.27-1.07.64-2.18.64s-1.73-.37-2.18-.64c-.37-.22-.6-.36-1.15-.36-.56 0-.78.13-1.15.36-.46.27-1.08.64-2.19.64-1.11 0-1.73-.37-2.18-.64-.37-.23-.6-.36-1.15-.36s-.78.13-1.15.36c-.46.27-1.08.64-2.19.64v-2c.56 0 .78-.13 1.15-.36.46-.27 1.08-.64 2.19-.64s1.73.37 2.18.64c.37.23.59.36 1.15.36.56 0 .78-.13 1.15-.36.46-.27 1.08-.64 2.19-.64 1.11 0 1.73.37 2.18.64.37.22.6.36 1.15.36s.78-.13 1.15-.36c.45-.27 1.07-.64 2.18-.64s1.73.37 2.18.64c.37.23.59.36 1.15.36v2zM8.67 12c.56 0 .78-.13 1.15-.36.46-.27 1.08-.64 2.19-.64 1.11 0 1.73.37 2.18.64.37.22.6.36 1.15.36s.78-.13 1.15-.36c.12-.07.26-.15.41-.23L10.48 5C10.18 4.39 9.55 4 8.86 4c-.68 0-1.31.39-1.62 1l-5.97 11.22c.29-.07.58-.22.86-.37.46-.27 1.08-.64 2.19-.64 1.11 0 1.73.37 2.18.64.37.22.6.35 1.17.15z" />
-    </svg>
-  );
-}
-
-function SecurityIcon() {
-  return (
-    <svg className="w-14 h-14" fill="currentColor" viewBox="0 0 24 24">
-      <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z" />
-    </svg>
-  );
-}
-
-function MedicalIcon() {
-  return (
-    <svg className="w-14 h-14" fill="currentColor" viewBox="0 0 24 24">
-      <path d="M19 3H5c-1.1 0-1.99.9-1.99 2L3 19c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-1 11h-4v4h-4v-4H6v-4h4V6h4v4h4v4z" />
-    </svg>
-  );
-}
-
-function LibraryIcon() {
-  return (
-    <svg className="w-14 h-14" fill="currentColor" viewBox="0 0 24 24">
-      <path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-1 9H9V9h10v2zm-4 4H9v-2h6v2zm4-8H9V5h10v2z" />
-    </svg>
-  );
-}
-
-function BedIcon() {
-  return (
-    <svg className="w-14 h-14" fill="currentColor" viewBox="0 0 24 24">
-      <path d="M7 13c1.66 0 3-1.34 3-3S8.66 7 7 7s-3 1.34-3 3 1.34 3 3 3zm12-6h-8v7H3V5H1v15h2v-3h18v3h2v-9c0-2.21-1.79-4-4-4z" />
-    </svg>
-  );
-}
-
-function SmartHomeIcon() {
-  return (
-    <svg className="w-14 h-14" fill="currentColor" viewBox="0 0 24 24">
-      <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
-    </svg>
-  );
-}
-
-function PlaygroundIcon() {
-  return (
-    <svg className="w-14 h-14" fill="currentColor" viewBox="0 0 24 24">
-      <path d="M13.5.67s.74 2.65.74 4.8c0 2.06-1.35 3.73-3.41 3.73-2.07 0-3.63-1.67-3.63-3.73l.03-.36C5.21 7.51 4 10.62 4 14c0 4.42 3.58 8 8 8s8-3.58 8-8C20 8.61 17.41 3.8 13.5.67zM11.71 19c-1.78 0-3.22-1.4-3.22-3.14 0-1.62 1.05-2.76 2.81-3.12 1.77-.36 3.6-1.21 4.62-2.58.39 1.29.59 2.65.59 4.04 0 2.65-2.15 4.8-4.8 4.8z" />
-    </svg>
   );
 }
