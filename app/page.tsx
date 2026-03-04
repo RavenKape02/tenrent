@@ -1,4 +1,10 @@
+'use client';
+
 import Image from "next/image";
+import { useState } from "react";
+import { useAuth } from "./contexts/AuthContext";
+import SignInModal from "./components/SignInModal";
+import SignUpModal from "./components/SignUpModal";
 
 // Hero section images
 const heroPhoneImage =
@@ -13,8 +19,29 @@ const heroArchImage3 =
   "https://www.figma.com/api/mcp/asset/d26c6d7b-1ca3-4c13-a783-9cb767ad10a1";
 
 export default function Home() {
+  const { user, logout } = useAuth();
+  const [showSignIn, setShowSignIn] = useState(false);
+  const [showSignUp, setShowSignUp] = useState(false);
+
   return (
     <div className="min-h-screen bg-white font-sans">
+      <SignInModal 
+        isOpen={showSignIn} 
+        onClose={() => setShowSignIn(false)}
+        onSwitchToSignUp={() => {
+          setShowSignIn(false);
+          setShowSignUp(true);
+        }}
+      />
+      <SignUpModal 
+        isOpen={showSignUp} 
+        onClose={() => setShowSignUp(false)}
+        onSwitchToSignIn={() => {
+          setShowSignUp(false);
+          setShowSignIn(true);
+        }}
+      />
+
       {/* Header */}
       <header className="bg-[#0fa8e2] py-4 px-6 md:px-24 shadow-md">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
@@ -39,12 +66,34 @@ export default function Home() {
             <a href="#" className="text-white text-lg hover:underline">
               How It Works
             </a>
-            <button className="bg-white text-[#0fa8e2] px-6 py-2 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
-              Sign In
-            </button>
-            <button className="bg-[#ff214f] text-white px-6 py-2 rounded-lg font-semibold hover:bg-[#e01d45] transition-colors">
-              Sign Up
-            </button>
+            {user ? (
+              <>
+                <span className="text-white text-sm">
+                  Welcome, {user.first_name}!
+                </span>
+                <button 
+                  onClick={logout}
+                  className="bg-white text-[#0fa8e2] px-6 py-2 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
+                >
+                  Logout
+                </button>
+              </>
+            ) : (
+              <>
+                <button 
+                  onClick={() => setShowSignIn(true)}
+                  className="bg-white text-[#0fa8e2] px-6 py-2 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
+                >
+                  Sign In
+                </button>
+                <button 
+                  onClick={() => setShowSignUp(true)}
+                  className="bg-[#ff214f] text-white px-6 py-2 rounded-lg font-semibold hover:bg-[#e01d45] transition-colors"
+                >
+                  Sign Up
+                </button>
+              </>
+            )}
           </nav>
           <button className="text-white md:hidden">
             <svg
