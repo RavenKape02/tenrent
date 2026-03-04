@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { authAPI, APIError } from '../lib/api';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -16,6 +17,7 @@ export default function SignInModal({ isOpen, onClose, onSwitchToSignUp }: SignI
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
+  const router = useRouter();
 
   if (!isOpen) return null;
 
@@ -27,9 +29,20 @@ export default function SignInModal({ isOpen, onClose, onSwitchToSignUp }: SignI
     try {
       const token = await authAPI.login({ email, password });
       await login(token.access_token);
+      
+      // Get user data to redirect based on user type
+      const userData = await authAPI.getCurrentUser();
+      
       onClose();
       setEmail('');
       setPassword('');
+      
+      // Redirect based on user type
+      if (userData.user_type === 'landlord') {
+        router.push('/landlord');
+      } else {
+        router.push('/renter');
+      }
     } catch (err) {
       if (err instanceof APIError) {
         setError(err.message);

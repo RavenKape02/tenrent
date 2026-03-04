@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { authAPI, APIError, UserCreate } from '../lib/api';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -23,6 +24,7 @@ export default function SignUpModal({ isOpen, onClose, onSwitchToSignIn }: SignU
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
+  const router = useRouter();
 
   if (!isOpen) return null;
 
@@ -58,6 +60,9 @@ export default function SignUpModal({ isOpen, onClose, onSwitchToSignIn }: SignU
       });
       
       await login(token.access_token);
+      
+      const userType = formData.user_type;
+      
       onClose();
       
       // Reset form
@@ -70,6 +75,13 @@ export default function SignUpModal({ isOpen, onClose, onSwitchToSignIn }: SignU
         phone: '',
       });
       setConfirmPassword('');
+      
+      // Redirect based on user type
+      if (userType === 'landlord') {
+        router.push('/landlord');
+      } else {
+        router.push('/renter');
+      }
     } catch (err) {
       if (err instanceof APIError) {
         setError(err.message);
