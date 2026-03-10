@@ -23,12 +23,12 @@ export default function Header({ onSignIn, onSignUp }: HeaderProps) {
         </div>
         <nav className="hidden md:flex items-center gap-10">
           <a
-            href="#"
-            className="text-white text-lg hover:underline underline underline-offset-4"
+            href="/"
+            className="text-white text-lg hover:underline underline-offset-4"
           >
             Home
           </a>
-          <a href="#" className="text-white text-lg hover:underline">
+          <a href="/listings" className="text-white text-lg hover:underline">
             Browse Listings
           </a>
           <a href="#" className="text-white text-lg hover:underline">

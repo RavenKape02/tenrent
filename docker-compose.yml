@@ -24,6 +24,5 @@ services:
 
 networks:
   tenrent-network:
-    # external: true
-    # name: tenrent-be_default
-    driver: bridge
+    external: true
+    name: tenrent-be_default
