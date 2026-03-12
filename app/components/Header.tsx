@@ -1,13 +1,9 @@
 "use client";
 
+import Link from "next/link";
 import { useAuth } from "../contexts/AuthContext";
 
-interface HeaderProps {
-  onSignIn: () => void;
-  onSignUp: () => void;
-}
-
-export default function Header({ onSignIn, onSignUp }: HeaderProps) {
+export default function Header() {
   const { user, logout } = useAuth();
 
   return (
@@ -47,20 +43,12 @@ export default function Header({ onSignIn, onSignUp }: HeaderProps) {
               </button>
             </>
           ) : (
-            <>
-              <button
-                onClick={onSignIn}
-                className="bg-white text-[#0fa8e2] px-6 py-2 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
-              >
-                Sign In
-              </button>
-              <button
-                onClick={onSignUp}
-                className="bg-[#ff214f] text-white px-6 py-2 rounded-lg font-semibold hover:bg-[#e01d45] transition-colors"
-              >
-                Sign Up
-              </button>
-            </>
+            <Link
+              href="/signin"
+              className="bg-white text-[#0fa8e2] px-6 py-2 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
+            >
+              Sign In
+            </Link>
           )}
         </nav>
         <button className="text-white md:hidden">

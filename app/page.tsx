@@ -1,9 +1,6 @@
 "use client";
 
-import { useState } from "react";
 import dynamic from "next/dynamic";
-import SignInModal from "./components/SignInModal";
-import SignUpModal from "./components/SignUpModal";
 import Header from "./components/Header";
 import HeroSection from "./components/HeroSection";
 import ImageCarousel from "./components/ImageCarousel";
@@ -16,32 +13,9 @@ const Grainient = dynamic(() => import("@/components/Grainient"), {
 });
 
 export default function Home() {
-  const [showSignIn, setShowSignIn] = useState(false);
-  const [showSignUp, setShowSignUp] = useState(false);
-
   return (
     <div className="min-h-screen bg-white font-sans">
-      <SignInModal
-        isOpen={showSignIn}
-        onClose={() => setShowSignIn(false)}
-        onSwitchToSignUp={() => {
-          setShowSignIn(false);
-          setShowSignUp(true);
-        }}
-      />
-      <SignUpModal
-        isOpen={showSignUp}
-        onClose={() => setShowSignUp(false)}
-        onSwitchToSignIn={() => {
-          setShowSignUp(false);
-          setShowSignIn(true);
-        }}
-      />
-
-      <Header
-        onSignIn={() => setShowSignIn(true)}
-        onSignUp={() => setShowSignUp(true)}
-      />
+      <Header />
 
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 pointer-events-none">
