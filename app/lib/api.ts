@@ -163,6 +163,12 @@ export interface ListingCreatePayload {
   status?: ListingStatus;
 }
 
+export interface ListingSummary {
+  listing_id: string;
+  total_bids: number;
+  highest_bid: number | null;
+}
+
 export interface ListListingsParams {
   status?: ListingStatus;
   city?: string;
@@ -191,6 +197,10 @@ export const listingsAPI = {
 
   async get(id: string): Promise<ListingRead> {
     return fetchAPI<ListingRead>(`/api/listings/${id}`);
+  },
+
+  async getSummary(id: string): Promise<ListingSummary> {
+    return fetchAPI<ListingSummary>(`/api/listings/${id}/summary`);
   },
 
   async create(data: ListingCreatePayload): Promise<ListingRead> {
@@ -277,6 +287,16 @@ export const bidsAPI = {
 
   async getMyBids(): Promise<BidRead[]> {
     return fetchAPI<BidRead[]>('/api/users/me/bids');
+  },
+
+  async getForListing(listingId: string): Promise<BidRead[]> {
+    return fetchAPI<BidRead[]>(`/api/listings/${listingId}/bids`);
+  },
+
+  async withdraw(bidId: string): Promise<BidRead> {
+    return fetchAPI<BidRead>(`/api/bids/${bidId}/withdraw`, {
+      method: 'POST',
+    });
   },
 };
 

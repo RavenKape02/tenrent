@@ -1,10 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '../../../contexts/AuthContext';
-import { listingsAPI, bidsAPI, type ListingRead } from '../../../lib/api';
+import { listingsAPI, bidsAPI, type ListingRead, type ListingSummary } from '../../../lib/api';
 
 function formatCents(cents: number): string {
   return `$${(cents / 100).toLocaleString()}`;
@@ -21,6 +21,8 @@ export default function PlaceBidPage() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [amountDollars, setAmountDollars] = useState('');
+  const [summary, setSummary] = useState<ListingSummary | null>(null);
+  const [summaryLoading, setSummaryLoading] = useState(true);
 
   useEffect(() => {
     if (!listingId) return;
@@ -31,12 +33,41 @@ export default function PlaceBidPage() {
       .finally(() => setLoading(false));
   }, [listingId]);
 
+  useEffect(() => {
+    if (!listingId) return;
+    listingsAPI
+      .getSummary(listingId)
+      .then(setSummary)
+      .catch(() => setSummary(null))
+      .finally(() => setSummaryLoading(false));
+  }, [listingId]);
+
+  const BID_INCREMENT_CENTS = 2500; // $25 increment
+
+  const effectiveMinCents = useMemo(() => {
+    if (!listing) return 0;
+    const baseMin = listing.minimum_bid;
+    const highest = summary?.highest_bid ?? 0;
+    if (highest && highest >= baseMin) {
+      return highest + BID_INCREMENT_CENTS;
+    }
+    return baseMin;
+  }, [listing, summary]);
+
+  useEffect(() => {
+    if (!listing || summaryLoading) return;
+    if (amountDollars !== '') return;
+    const cents = effectiveMinCents || listing.minimum_bid;
+    setAmountDollars((cents / 100).toFixed(2));
+  }, [listing, summaryLoading, effectiveMinCents, amountDollars]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!listing || !user) return;
     const amount = Math.round(parseFloat(amountDollars || '0') * 100);
-    if (amount < listing.minimum_bid) {
-      setError(`Minimum bid is ${formatCents(listing.minimum_bid)}`);
+    const minCents = effectiveMinCents || listing.minimum_bid;
+    if (amount < minCents) {
+      setError(`Minimum to lead is ${formatCents(minCents)}`);
       return;
     }
     setError(null);
@@ -92,9 +123,15 @@ export default function PlaceBidPage() {
         <p className="text-gray-600 text-sm mb-6">
           {listing.address_line_1}, {listing.city}
         </p>
-        <p className="text-sm text-gray-600 mb-4">
+        <p className="text-sm text-gray-600 mb-2">
           Base rent: {formatCents(listing.monthly_rent)}/mo · Minimum premium bid: {formatCents(listing.minimum_bid)}
         </p>
+        {summary && summary.highest_bid && (
+          <p className="text-xs text-gray-600 mb-4">
+            Current high bid: +{formatCents(summary.highest_bid)} · Minimum to lead:{' '}
+            +{formatCents(effectiveMinCents || listing.minimum_bid)}
+          </p>
+        )}
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -103,11 +140,11 @@ export default function PlaceBidPage() {
             <input
               type="number"
               step="0.01"
-              min={listing.minimum_bid / 100}
+              min={(effectiveMinCents || listing.minimum_bid) / 100}
               required
               value={amountDollars}
               onChange={(e) => setAmountDollars(e.target.value)}
-              placeholder={String(listing.minimum_bid / 100)}
+              placeholder={((effectiveMinCents || listing.minimum_bid) / 100).toFixed(2)}
               className="w-full border border-gray-300 rounded-lg px-3 py-2"
             />
           </div>

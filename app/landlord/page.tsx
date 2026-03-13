@@ -4,7 +4,12 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '../contexts/AuthContext';
-import { listingsAPI, type ListingRead, type ListingStatus } from '../lib/api';
+import {
+  listingsAPI,
+  type ListingRead,
+  type ListingStatus,
+  type ListingSummary,
+} from '../lib/api';
 import DashboardLayout from '../components/DashboardLayout';
 import ListingCard from '../components/ListingCard';
 
@@ -23,6 +28,7 @@ export default function LandlordDashboard() {
   const [listings, setListings] = useState<ListingRead[]>([]);
   const [fetchLoading, setFetchLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<ListingStatus | 'all'>('active');
+  const [summaries, setSummaries] = useState<Record<string, ListingSummary>>({});
 
   useEffect(() => {
     if (!loading && !user) router.push('/');
@@ -40,6 +46,34 @@ export default function LandlordDashboard() {
       .catch(() => setListings([]))
       .finally(() => setFetchLoading(false));
   }, [user?.id]);
+
+  useEffect(() => {
+    const loadSummaries = async () => {
+      if (!listings.length) return;
+      try {
+        const results = await Promise.all(
+          listings.map(async (l) => {
+            try {
+              const summary = await listingsAPI.getSummary(l.id);
+              return [l.id, summary] as const;
+            } catch {
+              return [l.id, null] as const;
+            }
+          }),
+        );
+        setSummaries((prev) => {
+          const next = { ...prev };
+          for (const [id, summary] of results) {
+            if (summary) next[id] = summary;
+          }
+          return next;
+        });
+      } catch {
+        // ignore summary errors
+      }
+    };
+    loadSummaries();
+  }, [listings]);
 
   if (loading) {
     return (
@@ -64,6 +98,8 @@ export default function LandlordDashboard() {
   const draftCount = listings.filter((l) => l.status === 'draft').length;
   const closedCount = listings.filter((l) => l.status === 'bidding_closed').length;
   const completedCount = listings.filter((l) => l.status === 'completed').length;
+
+  const formatCents = (cents: number) => `$${(cents / 100).toLocaleString()}`;
 
   return (
     <DashboardLayout role="landlord">
@@ -173,12 +209,21 @@ export default function LandlordDashboard() {
                       compact={false}
                       asLandlord
                     />
+                    <p className="mt-1 text-xs text-gray-500">
+                      {summaries[listing.id]
+                        ? `${summaries[listing.id].total_bids} bid${summaries[listing.id].total_bids === 1 ? '' : 's'}${
+                            summaries[listing.id].highest_bid
+                              ? ` · High: +${formatCents(summaries[listing.id].highest_bid!)}`
+                              : ''
+                          }`
+                        : 'Loading bid summary…'}
+                    </p>
                     <div className="mt-2 flex gap-2">
                       <Link
                         href={`/landlord/listings/${listing.id}/edit`}
                         className="text-sm text-[#0fa8e2] font-medium hover:underline"
                       >
-                        Edit
+                        Edit / Bids
                       </Link>
                       <Link
                         href={`/listings/${listing.id}`}

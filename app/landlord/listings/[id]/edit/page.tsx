@@ -11,6 +11,8 @@ import {
   type ListingRead,
   type ListingCreatePayload,
   type ListingStatus,
+  bidsAPI,
+  type BidRead,
 } from '../../../../lib/api';
 
 const STATUS_OPTIONS: { value: ListingStatus; label: string }[] = [
@@ -32,6 +34,8 @@ export default function EditListingPage() {
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [bids, setBids] = useState<BidRead[]>([]);
+  const [loadingBids, setLoadingBids] = useState(true);
 
   const [address_line_1, setAddress_line_1] = useState('');
   const [address_line_2, setAddress_line_2] = useState('');
@@ -73,6 +77,16 @@ export default function EditListingPage() {
       })
       .catch((e: unknown) => setError(e instanceof Error ? e.message : 'Failed to load'))
       .finally(() => setLoading(false));
+  }, [id]);
+
+  useEffect(() => {
+    if (!id) return;
+    setLoadingBids(true);
+    bidsAPI
+      .getForListing(id)
+      .then(setBids)
+      .catch(() => setBids([]))
+      .finally(() => setLoadingBids(false));
   }, [id]);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -206,6 +220,36 @@ export default function EditListingPage() {
       <main className="max-w-2xl mx-auto px-6 py-8">
         <h1 className="text-2xl font-bold text-gray-900 mb-2">Edit listing</h1>
         <p className="text-gray-600 mb-6">{listing.address_line_1}, {listing.city}</p>
+
+        {/* Bids on this listing */}
+        <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
+          <h2 className="text-lg font-semibold text-gray-900 mb-3">Bids</h2>
+          {loadingBids ? (
+            <div className="flex justify-center py-4">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#0fa8e2]" />
+            </div>
+          ) : bids.length === 0 ? (
+            <p className="text-sm text-gray-600">No bids yet.</p>
+          ) : (
+            <div className="space-y-2 text-sm">
+              {bids.map((bid) => (
+                <div
+                  key={bid.id}
+                  className="flex items-center justify-between border border-gray-100 rounded-lg px-3 py-2"
+                >
+                  <div>
+                    <p className="font-semibold text-gray-900">
+                      ${(bid.amount / 100).toFixed(2)} / mo • {bid.status}
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      Placed {new Date(bid.created_at).toLocaleString()}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
 
         {/* Photos — Landlord only */}
         <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
