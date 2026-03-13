@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { authAPI, APIError } from "../lib/api";
 import { useAuth } from "../contexts/AuthContext";
+import { getGoogleIdToken } from "../lib/googleAuth";
 
 export default function SignInPage() {
   const [email, setEmail] = useState("");
@@ -13,6 +14,36 @@ export default function SignInPage() {
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
   const router = useRouter();
+
+  const handleGoogleSignIn = async () => {
+    setError("");
+    setLoading(true);
+
+    try {
+      // Returns a Google OAuth access token via popup
+      const accessToken = await getGoogleIdToken();
+      const token = await authAPI.loginWithGoogle({ access_token: accessToken });
+      await login(token.access_token);
+
+      const userData = await authAPI.getCurrentUser();
+
+      if (userData.user_type === "landlord") {
+        router.push("/landlord");
+      } else {
+        router.push("/renter");
+      }
+    } catch (err) {
+      if (err instanceof APIError) {
+        setError(err.message);
+      } else if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Google sign-in failed");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -84,7 +115,9 @@ export default function SignInPage() {
             {/* Google SSO */}
             <button
               type="button"
-              className="mb-3 flex w-full items-center justify-center gap-2 rounded-lg border border-[#808080] bg-white px-2.5 py-2 shadow-[0px_1px_2px_0px_rgba(0,0,0,0.11)] transition-colors hover:bg-gray-50"
+              onClick={handleGoogleSignIn}
+              disabled={loading}
+              className="mb-3 flex w-full items-center justify-center gap-2 rounded-lg border border-[#808080] bg-white px-2.5 py-2 shadow-[0px_1px_2px_0px_rgba(0,0,0,0.11)] transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
             >
               <svg className="h-4 w-4" viewBox="0 0 24 24">
                 <path
@@ -105,7 +138,7 @@ export default function SignInPage() {
                 />
               </svg>
               <span className="text-[12px] text-[#52525b]">
-                Continue with Google
+                {loading ? "Signing in..." : "Continue with Google"}
               </span>
             </button>
 

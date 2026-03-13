@@ -21,6 +21,15 @@ export interface LoginRequest {
   password: string;
 }
 
+export interface GoogleLoginRequest {
+  id_token?: string;
+  access_token?: string;
+  user_type?: 'landlord' | 'renter';
+  first_name?: string;
+  last_name?: string;
+  phone?: string;
+}
+
 export interface Token {
   access_token: string;
   token_type: string;
@@ -281,6 +290,13 @@ export const authAPI = {
 
   async login(data: LoginRequest): Promise<Token> {
     return fetchAPI<Token>('/auth/api/auth/login', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  },
+
+  async loginWithGoogle(data: GoogleLoginRequest): Promise<Token> {
+    return fetchAPI<Token>('/auth/api/auth/google', {
       method: 'POST',
       body: JSON.stringify(data),
     });

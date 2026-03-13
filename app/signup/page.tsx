@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { authAPI, APIError, UserCreate } from "../lib/api";
 import { useAuth } from "../contexts/AuthContext";
+import { getGoogleIdToken } from "../lib/googleAuth";
 
 export default function SignUpPage() {
   const [formData, setFormData] = useState<UserCreate>({
@@ -70,6 +71,41 @@ export default function SignUpPage() {
     }
   };
 
+  const handleGoogleSignUp = async () => {
+    setError("");
+    setLoading(true);
+
+    try {
+      // Returns a Google OAuth access token via popup
+      const accessToken = await getGoogleIdToken();
+      const token = await authAPI.loginWithGoogle({
+        access_token: accessToken,
+        user_type: formData.user_type,
+        first_name: formData.first_name || undefined,
+        last_name: formData.last_name || undefined,
+        phone: formData.phone || undefined,
+      });
+
+      await login(token.access_token);
+
+      if (formData.user_type === "landlord") {
+        router.push("/landlord");
+      } else {
+        router.push("/renter");
+      }
+    } catch (err) {
+      if (err instanceof APIError) {
+        setError(err.message);
+      } else if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Google sign-up failed");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const inputClass =
     "h-7.75 w-full rounded-lg border border-[#e5e5e5] bg-white px-2.5 py-2 text-[12px] text-gray-900 shadow-[0px_1px_2px_0px_rgba(0,0,0,0.11)] focus:border-[#0fa8e2] focus:outline-none focus:ring-1 focus:ring-[#0fa8e2]";
 
@@ -116,7 +152,9 @@ export default function SignUpPage() {
             {/* Google SSO */}
             <button
               type="button"
-              className="mb-3 flex w-full items-center justify-center gap-2 rounded-lg border border-[#808080] bg-white px-2.5 py-2 shadow-[0px_1px_2px_0px_rgba(0,0,0,0.11)] transition-colors hover:bg-gray-50"
+              onClick={handleGoogleSignUp}
+              disabled={loading}
+              className="mb-3 flex w-full items-center justify-center gap-2 rounded-lg border border-[#808080] bg-white px-2.5 py-2 shadow-[0px_1px_2px_0px_rgba(0,0,0,0.11)] transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
             >
               <svg className="h-4 w-4" viewBox="0 0 24 24">
                 <path
@@ -137,7 +175,7 @@ export default function SignUpPage() {
                 />
               </svg>
               <span className="text-[12px] text-[#52525b]">
-                Continue with Google
+                {loading ? "Creating Account..." : "Continue with Google"}
               </span>
             </button>
 
