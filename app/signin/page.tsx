@@ -34,7 +34,16 @@ export default function SignInPage() {
       }
     } catch (err) {
       if (err instanceof APIError) {
-        setError(err.message);
+        if (
+          err.status === 400 &&
+          err.message === "User type is required to create a new account with Google"
+        ) {
+          setError(
+            "No account exists for this Google email. Please use Sign up with Google first so we can set your role.",
+          );
+        } else {
+          setError(err.message);
+        }
       } else if (err instanceof Error) {
         setError(err.message);
       } else {

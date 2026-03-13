@@ -19,6 +19,7 @@ export default function SignUpPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [hasChosenUserType, setHasChosenUserType] = useState(false);
   const { login } = useAuth();
   const router = useRouter();
 
@@ -26,6 +27,9 @@ export default function SignUpPage() {
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     const { name, value } = e.target;
+    if (name === "user_type") {
+      setHasChosenUserType(true);
+    }
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
@@ -73,6 +77,15 @@ export default function SignUpPage() {
 
   const handleGoogleSignUp = async () => {
     setError("");
+
+    // Ensure the user explicitly chooses renter vs landlord before using Google
+    if (!hasChosenUserType) {
+      setError(
+        "Please select whether you are a renter or landlord before continuing with Google.",
+      );
+      return;
+    }
+
     setLoading(true);
 
     try {
