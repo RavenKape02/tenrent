@@ -1,43 +1,57 @@
 "use client";
 
 import Link from "next/link";
+import { Manrope } from "next/font/google";
 import { useAuth } from "../contexts/AuthContext";
+
+const manrope = Manrope({
+  subsets: ["latin"],
+  weight: ["500", "600", "700", "800"],
+});
 
 export default function Header() {
   const { user, logout } = useAuth();
 
   return (
-    <header className="bg-[#0fa8e2] py-4 px-6 md:px-24 shadow-md">
-      <div className="max-w-7xl mx-auto flex items-center justify-between">
+    <header className="sticky top-0 z-50 px-4 pt-4 md:px-8">
+      <div className="mx-auto flex max-w-7xl items-center justify-between rounded-2xl border border-white/30 bg-white/6 px-4 py-3 shadow-[0_8px_28px_rgba(0,0,0,0.18)] backdrop-blur-2xl backdrop-saturate-150 md:px-8 md:py-4">
         <div className="flex items-center gap-3">
-          <div className="w-11 h-11 bg-white rounded-lg flex items-center justify-center">
-            <span className="text-[#0fa8e2] font-bold text-xl">T</span>
+          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-white/90 shadow-inner shadow-white/60">
+            <span className="text-xl font-extrabold text-[#0b82ae]">T</span>
           </div>
-          <span className="text-white font-semibold text-2xl md:text-3xl">
+          <span
+            className={`${manrope.className} text-2xl font-semibold tracking-tight text-white md:text-3xl`}
+          >
             Tenrent
           </span>
         </div>
-        <nav className="hidden md:flex items-center gap-10">
-          <a
+        <nav className="hidden items-center gap-8 md:flex">
+          <Link
             href="/"
-            className="text-white text-lg hover:underline underline-offset-4"
+            className={`${manrope.className} text-sm font-medium uppercase tracking-[0.12em] text-white/90 transition hover:text-white`}
           >
             Home
-          </a>
-          <a href="/listings" className="text-white text-lg hover:underline">
+          </Link>
+          <Link
+            href="/listings"
+            className={`${manrope.className} text-sm font-medium uppercase tracking-[0.12em] text-white/90 transition hover:text-white`}
+          >
             Browse Listings
-          </a>
-          <a href="#" className="text-white text-lg hover:underline">
+          </Link>
+          <Link
+            href="#"
+            className={`${manrope.className} text-sm font-medium uppercase tracking-[0.12em] text-white/90 transition hover:text-white`}
+          >
             How It Works
-          </a>
+          </Link>
           {user ? (
             <>
-              <span className="text-white text-sm">
+              <span className={`${manrope.className} text-sm text-white/85`}>
                 Welcome, {user.first_name}!
               </span>
               <button
                 onClick={logout}
-                className="bg-white text-[#0fa8e2] px-6 py-2 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
+                className={`${manrope.className} rounded-xl border border-white/60 bg-white/90 px-5 py-2.5 text-sm font-semibold text-[#0b82ae] shadow-sm shadow-cyan-100 transition hover:bg-white`}
               >
                 Logout
               </button>
@@ -45,13 +59,16 @@ export default function Header() {
           ) : (
             <Link
               href="/signin"
-              className="bg-white text-[#0fa8e2] px-6 py-2 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
+              className={`${manrope.className} rounded-xl border border-white/60 bg-white/90 px-5 py-2.5 text-sm font-semibold text-[#0b82ae] shadow-sm shadow-cyan-100 transition hover:bg-white`}
             >
               Sign In
             </Link>
           )}
         </nav>
-        <button className="text-white md:hidden">
+        <button
+          className="rounded-lg p-2 text-white transition hover:bg-white/10 md:hidden"
+          aria-label="Open menu"
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="h-6 w-6"

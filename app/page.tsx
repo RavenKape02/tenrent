@@ -15,8 +15,6 @@ const Grainient = dynamic(() => import("@/components/Grainient"), {
 export default function Home() {
   return (
     <div className="min-h-screen bg-white font-sans">
-      <Header />
-
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 pointer-events-none">
           <Grainient
@@ -45,6 +43,7 @@ export default function Home() {
           />
         </div>
         <div className="relative z-10">
+          <Header />
           <HeroSection />
           <ImageCarousel />
           <ActiveAuctions />

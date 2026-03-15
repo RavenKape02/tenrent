@@ -160,4 +160,26 @@
   body {
     @apply bg-background text-foreground;
   }
+  button,
+  a,
+  [role="button"],
+  input[type="submit"],
+  input[type="button"],
+  select,
+  summary {
+    cursor: pointer;
+  }
+  button:not(:disabled),
+  a:not(:disabled) {
+    transition:
+      background-color 0.2s ease,
+      color 0.2s ease,
+      opacity 0.2s ease,
+      box-shadow 0.2s ease;
+  }
+  button:not(:disabled):hover,
+  a:not(:disabled):hover,
+  [role="button"]:hover {
+    opacity: 0.9;
+  }
 }
