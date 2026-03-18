@@ -1,57 +1,77 @@
 "use client";
 
 import Link from "next/link";
-import { Manrope } from "next/font/google";
+import { usePathname } from "next/navigation";
 import { useAuth } from "../contexts/AuthContext";
-
-const manrope = Manrope({
-  subsets: ["latin"],
-  weight: ["500", "600", "700", "800"],
-});
 
 export default function Header() {
   const { user, logout } = useAuth();
+  const pathname = usePathname();
+  const isLandlord = user?.user_type === "landlord";
+  const isHomeActive = pathname === "/";
+  const isListingsActive = pathname.startsWith("/listings");
 
   return (
-    <header className="sticky top-0 z-50 px-4 pt-4 md:px-8">
-      <div className="mx-auto flex max-w-7xl items-center justify-between rounded-2xl border border-white/30 bg-white/6 px-4 py-3 shadow-[0_8px_28px_rgba(0,0,0,0.18)] backdrop-blur-2xl backdrop-saturate-150 md:px-8 md:py-4">
-        <div className="flex items-center gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-white/90 shadow-inner shadow-white/60">
-            <span className="text-xl font-extrabold text-[#0b82ae]">T</span>
+    <header className="sticky top-0 z-20 border-b border-white/10 bg-[#070c14]/80 backdrop-blur-xl">
+      <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center relative z-10">
+        <Link href="/" className="flex items-center gap-3">
+          <div className="w-11 h-11 bg-linear-to-br from-cyan-400 to-sky-600 rounded-xl flex items-center justify-center shadow-[0_10px_30px_rgba(14,165,233,0.35)]">
+            <span className="text-white font-black text-xl">T</span>
           </div>
-          <span
-            className={`${manrope.className} text-2xl font-semibold tracking-tight text-white md:text-3xl`}
-          >
-            Tenrent
+          <span className="text-slate-100 font-semibold text-2xl tracking-tight">
+            TenRent
           </span>
-        </div>
-        <nav className="hidden items-center gap-8 md:flex">
+        </Link>
+
+        <nav className="flex items-center gap-6">
           <Link
             href="/"
-            className={`${manrope.className} text-sm font-medium uppercase tracking-[0.12em] text-white/90 transition hover:text-white`}
+            className={`transition-colors ${
+              isHomeActive
+                ? "text-cyan-300 font-semibold"
+                : "text-slate-300 hover:text-white"
+            }`}
           >
             Home
           </Link>
           <Link
             href="/listings"
-            className={`${manrope.className} text-sm font-medium uppercase tracking-[0.12em] text-white/90 transition hover:text-white`}
+            className={`transition-colors ${
+              isListingsActive
+                ? "text-cyan-300 font-semibold"
+                : "text-slate-300 hover:text-white"
+            }`}
           >
             Browse Listings
           </Link>
-          <Link
-            href="#"
-            className={`${manrope.className} text-sm font-medium uppercase tracking-[0.12em] text-white/90 transition hover:text-white`}
-          >
-            How It Works
-          </Link>
           {user ? (
             <>
-              <span className={`${manrope.className} text-sm text-white/85`}>
-                Welcome, {user.first_name}!
-              </span>
+              {isLandlord ? (
+                <Link
+                  href="/landlord"
+                  className="text-slate-300 hover:text-white transition-colors"
+                >
+                  Landlord Dashboard
+                </Link>
+              ) : (
+                <Link
+                  href="/renter"
+                  className="text-slate-300 hover:text-white transition-colors"
+                >
+                  My Bids
+                </Link>
+              )}
+              {isLandlord && (
+                <Link
+                  href="/landlord/listings/new"
+                  className="bg-white/10 border border-white/20 text-cyan-200 px-4 py-2 rounded-xl font-semibold hover:bg-white/15 hover:border-cyan-300/40 transition-all"
+                >
+                  + Create Listing
+                </Link>
+              )}
               <button
                 onClick={logout}
-                className={`${manrope.className} rounded-xl border border-white/60 bg-white/90 px-5 py-2.5 text-sm font-semibold text-[#0b82ae] shadow-sm shadow-cyan-100 transition hover:bg-white`}
+                className="bg-white/5 border border-white/20 text-slate-200 px-4 py-2 rounded-xl font-semibold hover:bg-white/10 hover:text-white transition-all"
               >
                 Logout
               </button>
@@ -59,31 +79,12 @@ export default function Header() {
           ) : (
             <Link
               href="/signin"
-              className={`${manrope.className} rounded-xl border border-white/60 bg-white/90 px-5 py-2.5 text-sm font-semibold text-[#0b82ae] shadow-sm shadow-cyan-100 transition hover:bg-white`}
+              className="bg-linear-to-r from-cyan-500 to-sky-600 text-white px-4 py-2 rounded-xl font-semibold hover:from-cyan-400 hover:to-sky-500 transition-all"
             >
-              Sign In
+              Sign in to bid
             </Link>
           )}
         </nav>
-        <button
-          className="rounded-lg p-2 text-white transition hover:bg-white/10 md:hidden"
-          aria-label="Open menu"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-6 w-6"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M4 6h16M4 12h16M4 18h16"
-            />
-          </svg>
-        </button>
       </div>
     </header>
   );

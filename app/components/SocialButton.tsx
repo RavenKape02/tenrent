@@ -1,6 +1,6 @@
 export default function SocialButton({ icon }: { icon: string }) {
   return (
-    <div className="w-10 h-10 rounded-full bg-[#186aa5] flex items-center justify-center cursor-pointer hover:bg-[#0fa8e2] transition-colors">
+    <div className="w-10 h-10 rounded-full border border-white/20 bg-white/5 flex items-center justify-center cursor-pointer hover:bg-cyan-400/20 hover:border-cyan-300/50 transition-colors">
       {icon === "facebook" && (
         <svg
           className="w-5 h-5 text-white"

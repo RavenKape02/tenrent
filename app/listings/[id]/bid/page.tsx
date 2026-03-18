@@ -1,10 +1,22 @@
-'use client';
+"use client";
 
-import { useState, useEffect, useMemo } from 'react';
-import { useParams, useRouter } from 'next/navigation';
-import Link from 'next/link';
-import { useAuth } from '../../../contexts/AuthContext';
-import { listingsAPI, bidsAPI, type ListingRead, type ListingSummary } from '../../../lib/api';
+import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
+import { useParams, useRouter } from "next/navigation";
+import { useAuth } from "../../../contexts/AuthContext";
+import {
+  bidsAPI,
+  listingsAPI,
+  type ListingRead,
+  type ListingSummary,
+} from "../../../lib/api";
+import {
+  ListingsBackLink,
+  ListingsCard,
+  ListingsCenteredState,
+  ListingsShell,
+  ListingsSpinner,
+} from "../../components/ListingsChrome";
 
 function formatCents(cents: number): string {
   return `$${(cents / 100).toLocaleString()}`;
@@ -20,7 +32,7 @@ export default function PlaceBidPage() {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [amountDollars, setAmountDollars] = useState('');
+  const [amountDollars, setAmountDollars] = useState("");
   const [summary, setSummary] = useState<ListingSummary | null>(null);
   const [summaryLoading, setSummaryLoading] = useState(true);
 
@@ -42,7 +54,7 @@ export default function PlaceBidPage() {
       .finally(() => setSummaryLoading(false));
   }, [listingId]);
 
-  const BID_INCREMENT_CENTS = 2500; // $25 increment
+  const BID_INCREMENT_CENTS = 2500;
 
   const effectiveMinCents = useMemo(() => {
     if (!listing) return 0;
@@ -56,7 +68,7 @@ export default function PlaceBidPage() {
 
   useEffect(() => {
     if (!listing || summaryLoading) return;
-    if (amountDollars !== '') return;
+    if (amountDollars !== "") return;
     const cents = effectiveMinCents || listing.minimum_bid;
     setAmountDollars((cents / 100).toFixed(2));
   }, [listing, summaryLoading, effectiveMinCents, amountDollars]);
@@ -64,77 +76,108 @@ export default function PlaceBidPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!listing || !user) return;
-    const amount = Math.round(parseFloat(amountDollars || '0') * 100);
+
+    const amount = Math.round(parseFloat(amountDollars || "0") * 100);
     const minCents = effectiveMinCents || listing.minimum_bid;
+
     if (amount < minCents) {
       setError(`Minimum to lead is ${formatCents(minCents)}`);
       return;
     }
+
     setError(null);
     setSubmitting(true);
     try {
       await bidsAPI.place(listing.id, amount);
-      router.push('/renter');
-    } catch (e: unknown) {
-      setError(e instanceof Error ? e.message : 'Failed to place bid');
+      router.push("/renter");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Failed to place bid");
     } finally {
       setSubmitting(false);
     }
   };
 
-  if (!user || user.user_type !== 'renter') {
+  if (!user || user.user_type !== "renter") {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-gray-600 mb-2">Only renters can place bids.</p>
-          <Link href="/listings" className="text-[#0fa8e2] font-semibold hover:underline">
-            Browse listings
-          </Link>
-        </div>
-      </div>
+      <ListingsShell maxWidthClassName="max-w-3xl">
+        <ListingsCenteredState
+          title="Only renters can place bids"
+          description="Switch to a renter account to submit bids on active listings."
+          action={
+            <Link
+              href="/listings"
+              className="text-cyan-300 font-semibold hover:text-cyan-200 transition-colors"
+            >
+              Browse listings
+            </Link>
+          }
+        />
+      </ListingsShell>
     );
   }
 
   if (loading || !listing) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#0fa8e2]" />
-      </div>
+      <ListingsShell maxWidthClassName="max-w-3xl">
+        <ListingsSpinner />
+      </ListingsShell>
     );
   }
 
-  if (listing.status !== 'active') {
+  if (listing.status !== "active") {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-gray-600 mb-2">This listing is not accepting bids.</p>
-          <Link href={`/listings/${listing.id}`} className="text-[#0fa8e2] font-semibold hover:underline">
-            View listing
-          </Link>
-        </div>
-      </div>
+      <ListingsShell maxWidthClassName="max-w-3xl">
+        <ListingsCenteredState
+          title="This listing is not accepting bids"
+          action={
+            <ListingsBackLink
+              href={`/listings/${listing.id}`}
+              label="View listing"
+            />
+          }
+        />
+      </ListingsShell>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
-      <div className="w-full max-w-md bg-white rounded-xl shadow-lg p-6">
-        <h1 className="text-xl font-bold text-gray-900 mb-1">Place a bid</h1>
-        <p className="text-gray-600 text-sm mb-6">
+    <ListingsShell maxWidthClassName="max-w-3xl">
+      <ListingsBackLink
+        href={`/listings/${listing.id}`}
+        label="Back to listing"
+        className="mb-5"
+      />
+
+      <ListingsCard>
+        <h1 className="text-2xl font-semibold text-white mb-1">Place a bid</h1>
+        <p className="text-slate-300 mb-5">
           {listing.address_line_1}, {listing.city}
         </p>
-        <p className="text-sm text-gray-600 mb-2">
-          Base rent: {formatCents(listing.monthly_rent)}/mo · Minimum premium bid: {formatCents(listing.minimum_bid)}
-        </p>
-        {summary && summary.highest_bid && (
-          <p className="text-xs text-gray-600 mb-4">
-            Current high bid: +{formatCents(summary.highest_bid)} · Minimum to lead:{' '}
-            +{formatCents(effectiveMinCents || listing.minimum_bid)}
+
+        <div className="rounded-xl border border-white/10 bg-[#08101d]/90 p-4 mb-5 text-sm text-slate-300">
+          <p>
+            Base rent:{" "}
+            <span className="text-white">
+              {formatCents(listing.monthly_rent)}/mo
+            </span>
           </p>
-        )}
-        <form onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+          <p className="mt-1">
+            Minimum premium bid:{" "}
+            <span className="text-white">
+              {formatCents(listing.minimum_bid)}
+            </span>
+          </p>
+          {summary?.highest_bid ? (
+            <p className="mt-1 text-cyan-200">
+              Current high bid: +{formatCents(summary.highest_bid)} · Minimum to
+              lead: +{formatCents(effectiveMinCents || listing.minimum_bid)}
+            </p>
+          ) : null}
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-slate-300 mb-1">
               Your bid (premium per month, $)
             </label>
             <input
@@ -144,30 +187,32 @@ export default function PlaceBidPage() {
               required
               value={amountDollars}
               onChange={(e) => setAmountDollars(e.target.value)}
-              placeholder={((effectiveMinCents || listing.minimum_bid) / 100).toFixed(2)}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2"
+              placeholder={(
+                (effectiveMinCents || listing.minimum_bid) / 100
+              ).toFixed(2)}
+              className="w-full rounded-xl border border-white/15 bg-white/5 text-slate-100 placeholder:text-slate-400 px-3 py-2 outline-none focus:border-cyan-400/70 transition-colors"
             />
           </div>
-          {error && (
-            <div className="mb-4 text-red-600 text-sm">{error}</div>
-          )}
+
+          {error && <div className="text-red-300 text-sm">{error}</div>}
+
           <div className="flex gap-3">
             <button
               type="submit"
               disabled={submitting}
-              className="flex-1 bg-[#ff214f] text-white py-2.5 rounded-lg font-semibold hover:bg-[#e01d45] disabled:opacity-50"
+              className="flex-1 bg-linear-to-r from-cyan-500 to-sky-600 text-white py-2.5 rounded-xl font-semibold hover:from-cyan-400 hover:to-sky-500 disabled:opacity-50 transition-all"
             >
-              {submitting ? 'Placing bid…' : 'Place bid'}
+              {submitting ? "Placing bid..." : "Place bid"}
             </button>
             <Link
               href={`/listings/${listing.id}`}
-              className="bg-gray-200 text-gray-800 px-4 py-2.5 rounded-lg font-semibold hover:bg-gray-300 text-center"
+              className="bg-white/10 border border-white/20 text-slate-100 px-4 py-2.5 rounded-xl font-semibold hover:bg-white/15 transition-colors text-center"
             >
               Cancel
             </Link>
           </div>
         </form>
-      </div>
-    </div>
+      </ListingsCard>
+    </ListingsShell>
   );
 }
