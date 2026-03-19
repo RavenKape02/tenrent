@@ -4,6 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import type { ListingRead } from '../lib/api';
 import { getListingImageUrl } from '../lib/api';
+import CountdownTimer from './CountdownTimer';
 
 const STATUS_LABELS: Record<string, string> = {
   draft: 'Draft',
@@ -15,19 +16,6 @@ const STATUS_LABELS: Record<string, string> = {
 
 function formatCents(cents: number): string {
   return `$${(cents / 100).toLocaleString()}`;
-}
-
-function timeUntil(endIso: string): string {
-  const end = new Date(endIso);
-  const now = new Date();
-  const ms = end.getTime() - now.getTime();
-  if (ms <= 0) return 'Ended';
-  const d = Math.floor(ms / (24 * 60 * 60 * 1000));
-  const h = Math.floor((ms % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000));
-  if (d > 0) return `${d}d ${h}h left`;
-  if (h > 0) return `${h}h left`;
-  const m = Math.floor((ms % (60 * 60 * 1000)) / (60 * 1000));
-  return `${m}m left`;
 }
 
 interface ListingCardProps {
@@ -140,7 +128,7 @@ export default function ListingCard({
                   />
                 </svg>
                 <span className="text-sm font-semibold">
-                  {timeUntil(listing.bidding_end)}
+                  <CountdownTimer endIso={listing.bidding_end} />
                 </span>
               </div>
             )}

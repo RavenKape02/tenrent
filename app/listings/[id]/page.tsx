@@ -17,6 +17,7 @@ import {
   ListingsShell,
   ListingsSpinner,
 } from "../components/ListingsChrome";
+import CountdownTimer from "../../components/CountdownTimer";
 
 function formatCents(cents: number): string {
   return `$${(cents / 100).toLocaleString()}`;
@@ -28,19 +29,6 @@ function formatDate(iso: string): string {
     month: "short",
     day: "numeric",
   });
-}
-
-function timeUntil(endIso: string): string {
-  const end = new Date(endIso);
-  const now = new Date();
-  const ms = end.getTime() - now.getTime();
-  if (ms <= 0) return "Ended";
-  const days = Math.floor(ms / (24 * 60 * 60 * 1000));
-  const hours = Math.floor((ms % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000));
-  if (days > 0) return `${days}d ${hours}h left`;
-  if (hours > 0) return `${hours}h left`;
-  const minutes = Math.floor((ms % (60 * 60 * 1000)) / (60 * 1000));
-  return `${minutes}m left`;
 }
 
 export default function ListingDetailPage() {
@@ -222,7 +210,7 @@ export default function ListingDetailPage() {
 
         {isActive && (
           <div className="mt-4 inline-flex items-center gap-2 rounded-full border border-cyan-300/30 bg-cyan-400/10 px-3 py-1 text-sm font-medium text-cyan-200">
-            {timeUntil(listing.bidding_end)}
+            <CountdownTimer endIso={listing.bidding_end} />
           </div>
         )}
       </ListingsCard>

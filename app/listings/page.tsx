@@ -21,6 +21,7 @@ const STATUS_OPTIONS: { value: ListingStatus | ""; label: string }[] = [
 
 export default function ListingsPage() {
   const { user } = useAuth();
+  const isRenter = user?.user_type === "renter";
   const [listings, setListings] = useState<ListingRead[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -39,7 +40,12 @@ export default function ListingsPage() {
       const params: Parameters<typeof listingsAPI.list>[0] = {
         limit: 50,
       };
-      if (status) params.status = status as ListingStatus;
+      // Renter should only see active bidding listings.
+      if (isRenter) {
+        params.status = "active";
+      } else if (status) {
+        params.status = status as ListingStatus;
+      }
       if (city.trim()) params.city = city.trim();
       if (minRent.trim()) params.min_rent = parseInt(minRent, 10) * 100;
       if (maxRent.trim()) params.max_rent = parseInt(maxRent, 10) * 100;
@@ -57,7 +63,11 @@ export default function ListingsPage() {
 
   useEffect(() => {
     fetchListings();
-  }, [status]);
+  }, [status, isRenter]);
+
+  useEffect(() => {
+    if (isRenter && status !== "active") setStatus("active");
+  }, [isRenter, status]);
 
   const isLandlord = user?.user_type === "landlord";
 
@@ -70,11 +80,13 @@ export default function ListingsPage() {
               Live Marketplace
             </p>
             <h1 className="text-3xl md:text-4xl font-semibold text-white tracking-tight">
-              {status === "active"
+              {isRenter
                 ? "Active Listings"
-                : status
-                  ? `Listings: ${STATUS_OPTIONS.find((o) => o.value === status)?.label ?? status}`
-                  : "All Listings"}
+                : status === "active"
+                  ? "Active Listings"
+                  : status
+                    ? `Listings: ${STATUS_OPTIONS.find((o) => o.value === status)?.label ?? status}`
+                    : "All Listings"}
             </h1>
             <p className="text-slate-300 mt-2 text-sm md:text-base">
               Discover verified homes and place bids with confidence.
@@ -96,26 +108,30 @@ export default function ListingsPage() {
           Filters
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4 items-end">
-          <div>
-            <label className="block text-xs text-slate-300 mb-1">Status</label>
-            <select
-              value={status}
-              onChange={(e) =>
-                setStatus((e.target.value || "") as ListingStatus | "")
-              }
-              className="w-full border border-white/15 bg-white/5 text-slate-100 rounded-xl px-3 py-2 text-sm min-w-35 outline-none focus:border-cyan-400/70 transition-colors"
-            >
-              {STATUS_OPTIONS.map((o) => (
-                <option
-                  key={o.value || "all"}
-                  value={o.value}
-                  className="text-slate-900"
-                >
-                  {o.label}
-                </option>
-              ))}
-            </select>
-          </div>
+          {!isRenter && (
+            <div>
+              <label className="block text-xs text-slate-300 mb-1">
+                Status
+              </label>
+              <select
+                value={status}
+                onChange={(e) =>
+                  setStatus((e.target.value || "") as ListingStatus | "")
+                }
+                className="w-full border border-white/15 bg-white/5 text-slate-100 rounded-xl px-3 py-2 text-sm min-w-35 outline-none focus:border-cyan-400/70 transition-colors"
+              >
+                {STATUS_OPTIONS.map((o) => (
+                  <option
+                    key={o.value || "all"}
+                    value={o.value}
+                    className="text-slate-900"
+                  >
+                    {o.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
           <div>
             <label className="block text-xs text-slate-300 mb-1">City</label>
             <input
@@ -203,7 +219,7 @@ export default function ListingsPage() {
               setMaxRent("");
               setBedrooms("");
               setAvailableBefore("");
-              setStatus("");
+              setStatus(isRenter ? "active" : "");
               setTimeout(fetchListings, 0);
             }}
             className="text-cyan-300 font-semibold hover:text-cyan-200 transition-colors"
