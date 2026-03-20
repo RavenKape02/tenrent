@@ -1,35 +1,42 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { authAPI, APIError, UserCreate } from "../lib/api";
 import { useAuth } from "../contexts/AuthContext";
 import { getGoogleIdToken } from "../lib/googleAuth";
 
+type SignUpFormData = Omit<UserCreate, "user_type"> & {
+  user_type: UserCreate["user_type"] | "";
+};
+
 export default function SignUpPage() {
-  const [formData, setFormData] = useState<UserCreate>({
+  const [formData, setFormData] = useState<SignUpFormData>({
     email: "",
     password: "",
     first_name: "",
     last_name: "",
-    user_type: "renter",
+    user_type: "",
     phone: "",
   });
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [hasChosenUserType, setHasChosenUserType] = useState(false);
+  const [fromGoogle, setFromGoogle] = useState(false);
   const { login } = useAuth();
   const router = useRouter();
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    setFromGoogle(params.get("from") === "google");
+  }, []);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     const { name, value } = e.target;
-    if (name === "user_type") {
-      setHasChosenUserType(true);
-    }
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
@@ -47,10 +54,15 @@ export default function SignUpPage() {
       return;
     }
 
+    if (!formData.user_type) {
+      setError("Please select whether you are a renter or landlord.");
+      return;
+    }
+
     setLoading(true);
 
     try {
-      await authAPI.register(formData);
+      await authAPI.register(formData as UserCreate);
 
       const token = await authAPI.login({
         email: formData.email,
@@ -79,7 +91,7 @@ export default function SignUpPage() {
     setError("");
 
     // Ensure the user explicitly chooses renter vs landlord before using Google
-    if (!hasChosenUserType) {
+    if (!formData.user_type) {
       setError(
         "Please select whether you are a renter or landlord before continuing with Google.",
       );
@@ -162,6 +174,13 @@ export default function SignUpPage() {
               </p>
             </div>
 
+            {fromGoogle && (
+              <div className="mb-3 rounded-md border border-blue-200 bg-blue-50 px-3 py-2 text-[12px] text-blue-700">
+                We couldn&apos;t find an existing account for that Google email.
+                Please complete sign up first to choose your role.
+              </div>
+            )}
+
             {/* Google SSO */}
             <button
               type="button"
@@ -219,6 +238,7 @@ export default function SignUpPage() {
                   required
                   className={inputClass}
                 >
+                  <option value="">Select an Option</option>
                   <option value="renter">
                     Renter (Looking for properties)
                   </option>

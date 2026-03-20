@@ -54,6 +54,34 @@ class APIError extends Error {
   }
 }
 
+function formatApiError(payload: unknown): string {
+  if (!payload || typeof payload !== 'object') return 'An error occurred';
+  const p = payload as { detail?: unknown };
+
+  // FastAPI validation format: { detail: [{ loc: [...], msg: "...", type: "..." }, ...] }
+  if (Array.isArray(p.detail)) {
+    const lines = p.detail
+      .map((item) => {
+        if (!item || typeof item !== 'object') return null;
+        const i = item as { loc?: unknown; msg?: unknown };
+        const loc = Array.isArray(i.loc)
+          ? i.loc
+              .filter((x) => typeof x === 'string' || typeof x === 'number')
+              .join('.')
+              .replace(/^body\./, '')
+          : '';
+        const msg = typeof i.msg === 'string' ? i.msg : 'Invalid value';
+        return loc ? `${loc}: ${msg}` : msg;
+      })
+      .filter(Boolean) as string[];
+
+    return lines.length ? lines.join('\n') : 'Validation error';
+  }
+
+  if (typeof p.detail === 'string') return p.detail;
+  return 'An error occurred';
+}
+
 async function fetchAPI<T>(
   endpoint: string,
   options: RequestInit = {}
@@ -80,8 +108,8 @@ async function fetchAPI<T>(
   });
 
   if (!response.ok) {
-    const error = await response.json().catch(() => ({ detail: 'An error occurred' }));
-    throw new APIError(response.status, error.detail || 'An error occurred');
+    const error = await response.json().catch(() => null);
+    throw new APIError(response.status, formatApiError(error));
   }
 
   return response.json();
@@ -106,8 +134,8 @@ async function fetchAPIFormData<T>(
     body,
   });
   if (!response.ok) {
-    const error = await response.json().catch(() => ({ detail: 'An error occurred' }));
-    throw new APIError(response.status, error.detail || 'An error occurred');
+    const error = await response.json().catch(() => null);
+    throw new APIError(response.status, formatApiError(error));
   }
   const text = await response.text();
   return (text ? JSON.parse(text) : null) as T;
@@ -225,8 +253,8 @@ export const listingsAPI = {
       },
     });
     if (!res.ok) {
-      const err = await res.json().catch(() => ({ detail: 'An error occurred' }));
-      throw new APIError(res.status, err.detail || 'An error occurred');
+      const err = await res.json().catch(() => null);
+      throw new APIError(res.status, formatApiError(err));
     }
   },
 
@@ -250,8 +278,8 @@ export const listingsAPI = {
       }
     );
     if (!res.ok) {
-      const err = await res.json().catch(() => ({ detail: 'An error occurred' }));
-      throw new APIError(res.status, err.detail || 'An error occurred');
+      const err = await res.json().catch(() => null);
+      throw new APIError(res.status, formatApiError(err));
     }
   },
 };

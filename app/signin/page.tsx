@@ -38,9 +38,8 @@ export default function SignInPage() {
           err.status === 400 &&
           err.message === "User type is required to create a new account with Google"
         ) {
-          setError(
-            "No account exists for this Google email. Please use Sign up with Google first so we can set your role.",
-          );
+          router.push("/signup?from=google");
+          return;
         } else {
           setError(err.message);
         }

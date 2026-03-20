@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import Image from 'next/image';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '../../../contexts/AuthContext';
@@ -32,6 +33,8 @@ export default function NewListingPage() {
   const [bidding_end, setBidding_end] = useState('');
   const [minimum_bid, setMinimum_bid] = useState('');
   const [status, setStatus] = useState<ListingStatus>('draft');
+  const [selectedPhotos, setSelectedPhotos] = useState<File[]>([]);
+  const [photoPreviewUrls, setPhotoPreviewUrls] = useState<string[]>([]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -62,13 +65,43 @@ export default function NewListingPage() {
     setSubmitting(true);
     try {
       const created = await listingsAPI.create(payload);
-      router.push(`/landlord/listings/${created.id}/edit`);
+      // If photos were selected on create, upload them immediately after listing creation.
+      if (selectedPhotos.length > 0) {
+        try {
+          await listingsAPI.uploadPhotos(created.id, selectedPhotos);
+          router.push(`/listings/${created.id}`);
+        } catch {
+          router.push(`/listings/${created.id}?upload=failed`);
+        }
+      } else {
+        router.push(`/listings/${created.id}`);
+      }
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : 'Failed to create listing');
     } finally {
       setSubmitting(false);
     }
   };
+
+  const handlePhotoSelection = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    if (!files.length) return;
+    if (files.length > 10) {
+      setError('You can select up to 10 photos.');
+      return;
+    }
+    setError(null);
+    setSelectedPhotos(files);
+  };
+
+  useEffect(() => {
+    const urls = selectedPhotos.map((file) => URL.createObjectURL(file));
+    setPhotoPreviewUrls(urls);
+
+    return () => {
+      urls.forEach((url) => URL.revokeObjectURL(url));
+    };
+  }, [selectedPhotos]);
 
   if (!user || user.user_type !== 'landlord') {
     return (
@@ -269,6 +302,69 @@ export default function NewListingPage() {
                 <option key={o.value} value={o.value}>{o.label}</option>
               ))}
             </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Photos (optional, up to 10)
+            </label>
+            <div className="rounded-xl border border-dashed border-gray-300 bg-gray-50 p-4">
+              <div className="flex flex-wrap items-center gap-3">
+                <label
+                  htmlFor="listing-photos"
+                  className="inline-flex cursor-pointer items-center rounded-lg bg-[#0fa8e2] px-4 py-2 text-sm font-semibold text-white hover:bg-[#0d8ec4] transition-colors"
+                >
+                  Choose photos
+                </label>
+                <span className="text-xs text-gray-500">
+                  JPG, PNG, WEBP up to 10 files
+                </span>
+              </div>
+              <input
+                id="listing-photos"
+                type="file"
+                accept="image/*"
+                multiple
+                onChange={handlePhotoSelection}
+                className="hidden"
+              />
+              {selectedPhotos.length > 0 ? (
+                <>
+                  <div className="mt-3 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
+                    {photoPreviewUrls.map((url, idx) => (
+                      <div
+                        key={`${url}-${idx}`}
+                        className="relative h-24 overflow-hidden rounded-lg border border-gray-200 bg-white"
+                      >
+                        <Image
+                          src={url}
+                          alt={`Selected photo ${idx + 1}`}
+                          fill
+                          className="object-cover"
+                          unoptimized
+                        />
+                      </div>
+                    ))}
+                  </div>
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {selectedPhotos.map((file, idx) => (
+                      <span
+                        key={`${file.name}-${idx}`}
+                        className="inline-flex items-center rounded-full border border-gray-200 bg-white px-3 py-1 text-xs text-gray-700"
+                      >
+                        {file.name}
+                      </span>
+                    ))}
+                  </div>
+                </>
+              ) : (
+                <p className="mt-3 text-xs text-gray-500">No photos selected yet.</p>
+              )}
+            </div>
+            {selectedPhotos.length > 0 && (
+              <p className="mt-2 text-xs text-gray-600">
+                {selectedPhotos.length} photo{selectedPhotos.length === 1 ? '' : 's'} selected
+              </p>
+            )}
           </div>
           <div className="flex gap-3 pt-4">
             <button
