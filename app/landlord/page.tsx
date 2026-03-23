@@ -5,7 +5,9 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '../contexts/AuthContext';
 import {
+  authAPI,
   listingsAPI,
+  type StripeConnectStatusResponse,
   type ListingRead,
   type ListingStatus,
   type ListingSummary,
@@ -29,6 +31,15 @@ export default function LandlordDashboard() {
   const [fetchLoading, setFetchLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<ListingStatus | 'all'>('active');
   const [summaries, setSummaries] = useState<Record<string, ListingSummary>>({});
+  const [connectStatus, setConnectStatus] = useState<StripeConnectStatusResponse | null>(null);
+  const [connectLoading, setConnectLoading] = useState(true);
+  const [connectStarting, setConnectStarting] = useState(false);
+  const [stripeMessage, setStripeMessage] = useState<string | null>(null);
+
+  // Test mode: manual account ID input
+  const isTestMode = process.env.NEXT_PUBLIC_STRIPE_TEST_MODE === 'true';
+  const [manualAccountId, setManualAccountId] = useState('');
+  const [savingManualAccount, setSavingManualAccount] = useState(false);
 
   useEffect(() => {
     if (!loading && !user) router.push('/');
@@ -75,6 +86,16 @@ export default function LandlordDashboard() {
     loadSummaries();
   }, [listings]);
 
+  useEffect(() => {
+    if (!user || user.user_type !== 'landlord') return;
+    setConnectLoading(true);
+    authAPI
+      .getStripeConnectStatus()
+      .then(setConnectStatus)
+      .catch(() => setConnectStatus(null))
+      .finally(() => setConnectLoading(false));
+  }, [user?.id, user?.user_type]);
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -101,6 +122,38 @@ export default function LandlordDashboard() {
 
   const formatCents = (cents: number) => `$${(cents / 100).toLocaleString()}`;
 
+  const handleStartConnect = async () => {
+    setConnectStarting(true);
+    setStripeMessage(null);
+    try {
+      const res = await authAPI.beginStripeConnectOnboarding();
+      window.location.href = res.url;
+    } catch (err) {
+      setStripeMessage(err instanceof Error ? err.message : 'Failed to start Stripe onboarding');
+    } finally {
+      setConnectStarting(false);
+    }
+  };
+
+  const handleManualAccountSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!manualAccountId.trim()) return;
+    setSavingManualAccount(true);
+    setStripeMessage(null);
+    try {
+      await authAPI.setStripeAccount(manualAccountId.trim());
+      setStripeMessage('Stripe account ID saved successfully');
+      setManualAccountId('');
+      // Refresh connect status
+      const status = await authAPI.getStripeConnectStatus();
+      setConnectStatus(status);
+    } catch (err) {
+      setStripeMessage(err instanceof Error ? err.message : 'Failed to save account ID');
+    } finally {
+      setSavingManualAccount(false);
+    }
+  };
+
   return (
     <DashboardLayout role="landlord">
       <main className="max-w-7xl mx-auto px-6 py-8">
@@ -120,6 +173,67 @@ export default function LandlordDashboard() {
             <span>+</span> Create New Listing
           </Link>
         </div>
+
+        {(!connectStatus?.account_id || !connectStatus.charges_enabled || !connectStatus.payouts_enabled) && (
+          <div className="mb-6 rounded-xl border border-amber-200 bg-amber-50 p-4">
+            <p className="text-sm font-semibold text-amber-800">
+              Connect Stripe to receive winning bid payouts.
+            </p>
+            
+            {isTestMode ? (
+              <>
+                <p className="mt-1 text-sm text-amber-700">
+                  <strong>Test Mode:</strong> Manually enter a Stripe connected account ID to start testing immediately.
+                </p>
+                <form onSubmit={handleManualAccountSubmit} className="mt-3 flex flex-col gap-2 sm:flex-row sm:items-center">
+                  <input
+                    type="text"
+                    value={manualAccountId}
+                    onChange={(e) => setManualAccountId(e.target.value)}
+                    placeholder="acct_..."
+                    className="flex-1 rounded-lg border border-amber-300 px-3 py-2 text-sm focus:border-amber-500 focus:outline-none"
+                  />
+                  <button
+                    type="submit"
+                    disabled={savingManualAccount || !manualAccountId.trim()}
+                    className="rounded-lg bg-amber-600 px-4 py-2 text-sm font-semibold text-white hover:bg-amber-700 disabled:opacity-50"
+                  >
+                    {savingManualAccount ? 'Saving...' : 'Save Account ID'}
+                  </button>
+                </form>
+                {!connectLoading && connectStatus?.account_id && (
+                  <p className="mt-2 text-xs text-amber-900">
+                    Current Account: {connectStatus.account_id}
+                  </p>
+                )}
+                {stripeMessage && <p className="mt-2 text-xs text-amber-800">{stripeMessage}</p>}
+              </>
+            ) : (
+              <>
+                <p className="mt-1 text-sm text-amber-700">
+                  Complete Stripe onboarding so charges and payouts are enabled for your landlord account.
+                </p>
+                <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:items-center">
+                  <button
+                    type="button"
+                    onClick={handleStartConnect}
+                    disabled={connectStarting}
+                    className="rounded-lg bg-amber-600 px-4 py-2 text-sm font-semibold text-white hover:bg-amber-700 disabled:opacity-50"
+                  >
+                    {connectStarting ? 'Redirecting...' : 'Connect Stripe'}
+                  </button>
+                  {!connectLoading && connectStatus?.account_id && (
+                    <span className="text-xs text-amber-900">
+                      Account: {connectStatus.account_id} · details submitted:{" "}
+                      {connectStatus.details_submitted ? "yes" : "no"}
+                    </span>
+                  )}
+                </div>
+                {stripeMessage && <p className="mt-2 text-xs text-amber-800">{stripeMessage}</p>}
+              </>
+            )}
+          </div>
+        )}
 
         {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">

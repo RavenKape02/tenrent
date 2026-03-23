@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useAuth } from "../../../contexts/AuthContext";
 import {
+  authAPI,
   bidsAPI,
   listingsAPI,
   type ListingRead,
@@ -76,6 +77,16 @@ export default function PlaceBidPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!listing || !user) return;
+    try {
+      const freshUser = await authAPI.getCurrentUser();
+      if (!freshUser.stripe_payment_method_id) {
+        setError("Please add your Stripe payment method in renter dashboard first.");
+        return;
+      }
+    } catch {
+      setError("Unable to verify renter payment setup. Please sign in again.");
+      return;
+    }
 
     const amount = Math.round(parseFloat(amountDollars || "0") * 100);
     const minCents = effectiveMinCents || listing.minimum_bid;
@@ -109,6 +120,25 @@ export default function PlaceBidPage() {
               className="text-cyan-300 font-semibold hover:text-cyan-200 transition-colors"
             >
               Browse listings
+            </Link>
+          }
+        />
+      </ListingsShell>
+    );
+  }
+
+  if (!user.stripe_payment_method_id) {
+    return (
+      <ListingsShell maxWidthClassName="max-w-3xl">
+        <ListingsCenteredState
+          title="Add payment method first"
+          description="Please add your Stripe test payment method in the renter dashboard before placing bids."
+          action={
+            <Link
+              href="/renter"
+              className="text-cyan-300 font-semibold hover:text-cyan-200 transition-colors"
+            >
+              Go to renter dashboard
             </Link>
           }
         />

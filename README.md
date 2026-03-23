@@ -39,11 +39,40 @@ Create a `.env` file in the project root with the following variables:
 NEXT_PUBLIC_API_URL=http://localhost:8000    # Backend API URL
 ```
 
+### Google OAuth
+```env
+NEXT_PUBLIC_GOOGLE_CLIENT_ID=your_google_client_id    # Same as backend
+```
+
+### Stripe Configuration
+```env
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_...        # Stripe publishable key (test or live)
+NEXT_PUBLIC_STRIPE_TEST_MODE=true                     # true = test mode, false = production mode
+```
+
+**Stripe Test Mode vs Production Mode:**
+- **Test Mode** (`NEXT_PUBLIC_STRIPE_TEST_MODE=true`):
+  - Shows manual Stripe account ID input for landlords
+  - Hides full onboarding button
+  - For rapid testing without completing Stripe Connect onboarding
+  - Use with Stripe test publishable key (`pk_test_...`)
+- **Production Mode** (`NEXT_PUBLIC_STRIPE_TEST_MODE=false`):
+  - Hides manual account ID input
+  - Shows only full Stripe Connect onboarding button
+  - Enforces complete KYC and account verification
+  - Use with Stripe live publishable key (`pk_live_...`)
+
+**⚠️ CRITICAL:** This value MUST match the backend's `stripe_test_mode` setting!
+- If backend is `true`, frontend must be `true`
+- If backend is `false`, frontend must be `false`
+- Mismatched values will cause API errors and confusing UX
+
 **Important Notes:**
 - `NEXT_PUBLIC_*` prefix makes the variable accessible in the browser
 - Update `NEXT_PUBLIC_API_URL` to point to your backend API endpoint
 - For production, use your production backend URL (e.g., `https://api.tenrent.com`)
 - For Docker deployments, you may need to adjust the URL based on your network configuration
+- Always restart the Next.js dev server after changing environment variables
 
 ### Additional Environment Variables (Optional)
 

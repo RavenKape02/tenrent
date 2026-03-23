@@ -14,6 +14,7 @@ export interface UserCreate {
   last_name: string;
   user_type: 'landlord' | 'renter';
   phone?: string;
+  stripe_account_id?: string;
 }
 
 export interface LoginRequest {
@@ -28,6 +29,7 @@ export interface GoogleLoginRequest {
   first_name?: string;
   last_name?: string;
   phone?: string;
+  stripe_account_id?: string;
 }
 
 export interface Token {
@@ -43,8 +45,28 @@ export interface UserRead {
   last_name: string;
   user_type: 'landlord' | 'renter';
   phone?: string;
+  stripe_account_id?: string;
+  stripe_customer_id?: string;
+  stripe_payment_method_id?: string;
   created_at: string;
   updated_at: string;
+}
+
+export interface StripeConnectOnboardResponse {
+  url: string;
+  account_id: string;
+}
+
+export interface StripeConnectStatusResponse {
+  account_id: string | null;
+  details_submitted: boolean;
+  charges_enabled: boolean;
+  payouts_enabled: boolean;
+}
+
+export interface StripeSetupIntentResponse {
+  client_secret: string;
+  customer_id: string;
 }
 
 class APIError extends Error {
@@ -361,6 +383,36 @@ export const authAPI = {
         current_password: currentPassword,
         new_password: newPassword,
       }),
+    });
+  },
+
+  async setStripeAccount(stripeAccountId: string): Promise<UserRead> {
+    return fetchAPI<UserRead>('/auth/api/auth/stripe-account', {
+      method: 'POST',
+      body: JSON.stringify({ stripe_account_id: stripeAccountId }),
+    });
+  },
+
+  async beginStripeConnectOnboarding(): Promise<StripeConnectOnboardResponse> {
+    return fetchAPI<StripeConnectOnboardResponse>('/auth/api/auth/stripe/connect/onboard', {
+      method: 'POST',
+    });
+  },
+
+  async getStripeConnectStatus(): Promise<StripeConnectStatusResponse> {
+    return fetchAPI<StripeConnectStatusResponse>('/auth/api/auth/stripe/connect/status');
+  },
+
+  async createStripeSetupIntent(): Promise<StripeSetupIntentResponse> {
+    return fetchAPI<StripeSetupIntentResponse>('/auth/api/auth/stripe/setup-intent', {
+      method: 'POST',
+    });
+  },
+
+  async setStripePaymentMethod(paymentMethodId: string): Promise<UserRead> {
+    return fetchAPI<UserRead>('/auth/api/auth/stripe-payment-method', {
+      method: 'POST',
+      body: JSON.stringify({ payment_method_id: paymentMethodId }),
     });
   },
 };

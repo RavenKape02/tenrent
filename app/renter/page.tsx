@@ -18,7 +18,7 @@ function bucketStatus(status: BidStatus): BidBucket {
 }
 
 export default function RenterDashboard() {
-  const { user, loading } = useAuth();
+  const { user, loading, refreshUser } = useAuth();
   const router = useRouter();
   const [bids, setBids] = useState<BidRead[]>([]);
   const [loadingBids, setLoadingBids] = useState(true);
@@ -88,7 +88,30 @@ export default function RenterDashboard() {
           <p className="text-gray-600">
             Browse listings and place bids. Only renters can bid on properties.
           </p>
+          <p className="mt-1 text-xs text-gray-500">
+            Signed in as: {user.email} · Payment method:{" "}
+            {user.stripe_payment_method_id ? "saved" : "not set"}
+          </p>
         </div>
+
+        {!user.stripe_payment_method_id && (
+          <div className="mb-6 rounded-xl border border-cyan-200 bg-cyan-50 p-4">
+            <p className="text-sm font-semibold text-cyan-900">
+              Add a payment method before placing bids.
+            </p>
+            <p className="mt-1 text-sm text-cyan-800">
+              Use Stripe secure card entry to save your bidding payment method.
+            </p>
+            <div className="mt-3">
+              <Link
+                href="/renter/payment-method"
+                className="inline-block rounded-lg bg-cyan-600 px-4 py-2 text-sm font-semibold text-white hover:bg-cyan-700"
+              >
+                Add payment method
+              </Link>
+            </div>
+          </div>
+        )}
 
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">

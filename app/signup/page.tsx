@@ -62,7 +62,15 @@ export default function SignUpPage() {
     setLoading(true);
 
     try {
-      await authAPI.register(formData as UserCreate);
+      const payload: UserCreate = {
+        email: formData.email,
+        password: formData.password,
+        first_name: formData.first_name,
+        last_name: formData.last_name,
+        user_type: formData.user_type as UserCreate["user_type"],
+        phone: formData.phone || undefined,
+      };
+      await authAPI.register(payload);
 
       const token = await authAPI.login({
         email: formData.email,
