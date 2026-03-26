@@ -10,6 +10,8 @@ export default function Header() {
   const isLandlord = user?.user_type === "landlord";
   const isHomeActive = pathname === "/";
   const isListingsActive = pathname.startsWith("/listings");
+  const isLandlordDashboardActive = pathname.startsWith("/landlord");
+  const isRenterDashboardActive = pathname.startsWith("/renter");
 
   return (
     <header className="sticky top-0 z-20 border-b border-white/10 bg-[#070c14]/80 backdrop-blur-xl">
@@ -49,14 +51,22 @@ export default function Header() {
               {isLandlord ? (
                 <Link
                   href="/landlord"
-                  className="text-slate-300 hover:text-white transition-colors"
+                  className={`transition-colors ${
+                    isLandlordDashboardActive
+                      ? "text-cyan-300 font-semibold"
+                      : "text-slate-300 hover:text-white"
+                  }`}
                 >
                   Landlord Dashboard
                 </Link>
               ) : (
                 <Link
                   href="/renter"
-                  className="text-slate-300 hover:text-white transition-colors"
+                  className={`transition-colors ${
+                    isRenterDashboardActive
+                      ? "text-cyan-300 font-semibold"
+                      : "text-slate-300 hover:text-white"
+                  }`}
                 >
                   My Bids
                 </Link>
