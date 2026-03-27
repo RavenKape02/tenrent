@@ -1,5 +1,9 @@
+"use client";
+
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { Cormorant_Garamond } from "next/font/google";
+import { listingsAPI, type MarketInsights } from "../lib/api";
 
 const cormorant = Cormorant_Garamond({
   subsets: ["latin"],
@@ -7,19 +11,83 @@ const cormorant = Cormorant_Garamond({
 });
 
 export default function LandlordCTA() {
-  const pulseEvents = [
-    "Verified renters entering",
-    "Bid spread tightening",
-    "Top offer re-ranked",
-    "Priority queue updated",
-  ];
+  const [insights, setInsights] = useState<MarketInsights | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  const momentumTiles = [
-    { title: "Downtown Loft", trend: "+14%", bars: [42, 56, 67, 79, 86] },
-    { title: "Riverside 2BR", trend: "+9%", bars: [38, 44, 52, 60, 71] },
-    { title: "Uptown Studio", trend: "+11%", bars: [34, 48, 53, 66, 74] },
-    { title: "Midtown Penthouse", trend: "+18%", bars: [46, 59, 70, 80, 92] },
-  ];
+  useEffect(() => {
+    listingsAPI
+      .getMarketInsights(14)
+      .then(setInsights)
+      .catch(() => setInsights(null))
+      .finally(() => setLoading(false));
+  }, []);
+
+  const pulseEvents = useMemo(() => {
+    if (!insights) {
+      return [
+        "No live market metrics available yet",
+        "Create a listing to begin collecting bid activity",
+      ];
+    }
+
+    const premium = (insights.highest_premium_cents / 100).toLocaleString();
+    const avgBids = insights.average_bids_per_listing.toFixed(2);
+
+    return [
+      `${insights.active_listings_count} active listings in market`,
+      `${insights.total_bids_in_window} bids recorded in last ${insights.window_days} days`,
+      `Top premium currently at $${premium} over minimum bid`,
+      `${avgBids} average bids per active listing (${insights.average_premium_percent.toFixed(2)}% avg premium)`,
+    ];
+  }, [insights]);
+
+  const momentumTiles = useMemo(() => {
+    if (!insights) return [];
+
+    return insights.listing_momentum.map((entry) => {
+      const peak = Math.max(...entry.daily_bid_counts, 1);
+      const bars = entry.daily_bid_counts.map((value) =>
+        Math.max(14, Math.round((value / peak) * 100)),
+      );
+
+      const trend = `+$${(entry.premium_cents / 100).toLocaleString()}`;
+
+      return {
+        title: entry.title,
+        trend,
+        bars,
+      };
+    });
+  }, [insights]);
+
+  const queueHealth = useMemo(() => {
+    if (!insights) return "No market activity yet";
+    if (insights.average_bids_per_listing >= 5)
+      return "Very strong competitive activity";
+    if (insights.average_bids_per_listing >= 3)
+      return "Healthy and consistent demand";
+    if (insights.average_bids_per_listing >= 1) return "Early demand building";
+    return "Low activity, opportunity to attract first movers";
+  }, [insights]);
+
+  const queueGrade = useMemo(() => {
+    if (!insights) return "-";
+    if (insights.average_bids_per_listing >= 5) return "A+";
+    if (insights.average_bids_per_listing >= 3) return "A";
+    if (insights.average_bids_per_listing >= 2) return "B";
+    if (insights.average_bids_per_listing >= 1) return "C";
+    return "D";
+  }, [insights]);
+
+  const avgPremiumText = useMemo(() => {
+    if (!insights) return "--";
+    return `${insights.average_premium_percent.toFixed(2)}%`;
+  }, [insights]);
+
+  const compactContext = useMemo(() => {
+    if (!insights) return "No recent data yet";
+    return `${insights.listings_closing_within_48h} listings close in 48h`;
+  }, [insights]);
 
   return (
     <section className="py-16 md:py-24">
@@ -63,11 +131,24 @@ export default function LandlordCTA() {
               ))}
             </div>
 
+            {loading && (
+              <p className="mt-4 text-xs text-slate-400">
+                Loading live metrics...
+              </p>
+            )}
+
             <Link
               href="/signup"
               className="mt-7 inline-flex w-full items-center justify-center gap-2 bg-linear-to-r from-cyan-500 to-sky-600 text-white px-6 py-3 rounded-2xl text-base font-semibold hover:from-cyan-400 hover:to-sky-500 transition-all shadow-[0_12px_30px_rgba(8,145,178,0.35)]"
             >
               Open your listing to serious renters
+            </Link>
+
+            <Link
+              href="/listings"
+              className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-2xl border border-white/20 bg-white/5 text-slate-100 px-6 py-3 text-sm font-medium hover:bg-white/10 transition-colors"
+            >
+              Browse active listings
             </Link>
           </div>
 
@@ -107,18 +188,45 @@ export default function LandlordCTA() {
                   </div>
                 </div>
               ))}
+              {!loading && momentumTiles.length === 0 && (
+                <div className="sm:col-span-2 rounded-2xl border border-white/10 bg-[#08101d]/85 p-4">
+                  <p className="text-sm text-slate-300">
+                    No listing momentum yet. Publish active listings to start
+                    seeing bid trends.
+                  </p>
+                </div>
+              )}
             </div>
 
-            <div className="mt-5 rounded-2xl border border-white/10 bg-[#091323]/85 p-4 flex items-center justify-between">
-              <div>
-                <p className="text-xs uppercase tracking-[0.16em] text-cyan-200/80">
-                  Queue Health
-                </p>
-                <p className="text-sm text-slate-300 mt-1">
-                  Strong buyer intent across top neighborhoods
-                </p>
+            <div className="mt-5 rounded-2xl border border-white/10 bg-[#091323]/85 p-4 md:p-5">
+              <div className="flex items-start justify-between gap-4">
+                <div className="min-w-0">
+                  <p className="text-xs uppercase tracking-[0.16em] text-cyan-200/80">
+                    Queue Health
+                  </p>
+                  <p className="mt-1 text-sm text-slate-200">{queueHealth}</p>
+                  <div className="mt-2.5 inline-flex items-baseline gap-2 rounded-lg border border-cyan-300/20 bg-cyan-400/8 px-2.5 py-1.5">
+                    <span className="text-[10px] uppercase tracking-[0.14em] text-cyan-200/75">
+                      Avg Premium
+                    </span>
+                    <span className="text-base font-semibold text-cyan-100">
+                      {avgPremiumText}
+                    </span>
+                  </div>
+                  <p className="mt-2 text-xs text-slate-400">
+                    {compactContext}
+                  </p>
+                </div>
+
+                <div className="shrink-0 rounded-xl border border-cyan-300/25 bg-cyan-400/10 px-3 py-2 text-center">
+                  <p className="text-[10px] uppercase tracking-[0.14em] text-cyan-200/70">
+                    Grade
+                  </p>
+                  <p className="mt-1 text-xl font-semibold text-white">
+                    {queueGrade}
+                  </p>
+                </div>
               </div>
-              <span className="text-2xl font-semibold text-white">A+</span>
             </div>
           </div>
         </div>

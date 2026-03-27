@@ -1,10 +1,11 @@
 // API client for TenRent backend
-export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+export const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
 /** Resolve listing photo URL (backend may return relative paths like /uploads/...) */
 export function getListingImageUrl(photo: string): string {
-  if (photo.startsWith('http')) return photo;
-  return `${API_BASE_URL.replace(/\/$/, '')}${photo.startsWith('/') ? '' : '/'}${photo}`;
+  if (photo.startsWith("http")) return photo;
+  return `${API_BASE_URL.replace(/\/$/, "")}${photo.startsWith("/") ? "" : "/"}${photo}`;
 }
 
 export interface UserCreate {
@@ -12,7 +13,7 @@ export interface UserCreate {
   password: string;
   first_name: string;
   last_name: string;
-  user_type: 'landlord' | 'renter';
+  user_type: "landlord" | "renter";
   phone?: string;
   stripe_account_id?: string;
 }
@@ -25,7 +26,7 @@ export interface LoginRequest {
 export interface GoogleLoginRequest {
   id_token?: string;
   access_token?: string;
-  user_type?: 'landlord' | 'renter';
+  user_type?: "landlord" | "renter";
   first_name?: string;
   last_name?: string;
   phone?: string;
@@ -43,7 +44,7 @@ export interface UserRead {
   email: string;
   first_name: string;
   last_name: string;
-  user_type: 'landlord' | 'renter';
+  user_type: "landlord" | "renter";
   phone?: string;
   stripe_account_id?: string;
   stripe_customer_id?: string;
@@ -70,48 +71,51 @@ export interface StripeSetupIntentResponse {
 }
 
 class APIError extends Error {
-  constructor(public status: number, message: string) {
+  constructor(
+    public status: number,
+    message: string,
+  ) {
     super(message);
-    this.name = 'APIError';
+    this.name = "APIError";
   }
 }
 
 function formatApiError(payload: unknown): string {
-  if (!payload || typeof payload !== 'object') return 'An error occurred';
+  if (!payload || typeof payload !== "object") return "An error occurred";
   const p = payload as { detail?: unknown };
 
   // FastAPI validation format: { detail: [{ loc: [...], msg: "...", type: "..." }, ...] }
   if (Array.isArray(p.detail)) {
     const lines = p.detail
       .map((item) => {
-        if (!item || typeof item !== 'object') return null;
+        if (!item || typeof item !== "object") return null;
         const i = item as { loc?: unknown; msg?: unknown };
         const loc = Array.isArray(i.loc)
           ? i.loc
-              .filter((x) => typeof x === 'string' || typeof x === 'number')
-              .join('.')
-              .replace(/^body\./, '')
-          : '';
-        const msg = typeof i.msg === 'string' ? i.msg : 'Invalid value';
+              .filter((x) => typeof x === "string" || typeof x === "number")
+              .join(".")
+              .replace(/^body\./, "")
+          : "";
+        const msg = typeof i.msg === "string" ? i.msg : "Invalid value";
         return loc ? `${loc}: ${msg}` : msg;
       })
       .filter(Boolean) as string[];
 
-    return lines.length ? lines.join('\n') : 'Validation error';
+    return lines.length ? lines.join("\n") : "Validation error";
   }
 
-  if (typeof p.detail === 'string') return p.detail;
-  return 'An error occurred';
+  if (typeof p.detail === "string") return p.detail;
+  return "An error occurred";
 }
 
 async function fetchAPI<T>(
   endpoint: string,
-  options: RequestInit = {}
+  options: RequestInit = {},
 ): Promise<T> {
-  const token = localStorage.getItem('access_token');
-  
+  const token = localStorage.getItem("access_token");
+
   const headers: Record<string, string> = {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   };
 
   // Merge existing headers from options
@@ -121,7 +125,7 @@ async function fetchAPI<T>(
   }
 
   if (token) {
-    headers['Authorization'] = `Bearer ${token}`;
+    headers["Authorization"] = `Bearer ${token}`;
   }
 
   const response = await fetch(`${API_BASE_URL}${endpoint}`, {
@@ -140,11 +144,11 @@ async function fetchAPI<T>(
 /** Use for FormData (e.g. file upload); do not set Content-Type so browser sets multipart boundary */
 async function fetchAPIFormData<T>(
   endpoint: string,
-  options: RequestInit & { body?: FormData } = {}
+  options: RequestInit & { body?: FormData } = {},
 ): Promise<T> {
-  const token = localStorage.getItem('access_token');
+  const token = localStorage.getItem("access_token");
   const headers: Record<string, string> = {};
-  if (token) headers['Authorization'] = `Bearer ${token}`;
+  if (token) headers["Authorization"] = `Bearer ${token}`;
   if (options.headers) {
     const existing = options.headers as Record<string, string>;
     Object.assign(headers, existing);
@@ -166,11 +170,11 @@ async function fetchAPIFormData<T>(
 // ============== Listings ==============
 
 export type ListingStatus =
-  | 'draft'
-  | 'active'
-  | 'bidding_closed'
-  | 'completed'
-  | 'cancelled';
+  | "draft"
+  | "active"
+  | "bidding_closed"
+  | "completed"
+  | "cancelled";
 
 export interface ListingRead {
   id: string;
@@ -219,6 +223,36 @@ export interface ListingSummary {
   highest_bid: number | null;
 }
 
+export interface ListingMomentumEntry {
+  listing_id: string;
+  title: string;
+  total_bids_in_window: number;
+  highest_active_bid_cents: number | null;
+  minimum_bid_cents: number;
+  premium_cents: number;
+  premium_percent: number;
+  daily_bid_counts: number[];
+}
+
+export interface MarketInsights {
+  window_days: number;
+  generated_at: string;
+  active_listings_count: number;
+  total_bids_in_window: number;
+  average_bids_per_listing: number;
+  highest_premium_cents: number;
+  average_premium_percent: number;
+  listings_closing_within_48h: number;
+  highest_premium_listing: {
+    listing_id: string;
+    title: string;
+    highest_bid_cents: number | null;
+    minimum_bid_cents: number;
+  } | null;
+  daily_bid_counts: number[];
+  listing_momentum: ListingMomentumEntry[];
+}
+
 export interface ListListingsParams {
   status?: ListingStatus;
   city?: string;
@@ -233,16 +267,20 @@ export interface ListListingsParams {
 export const listingsAPI = {
   async list(params: ListListingsParams = {}): Promise<ListingRead[]> {
     const search = new URLSearchParams();
-    if (params.status != null) search.set('status', params.status);
-    if (params.city) search.set('city', params.city);
-    if (params.min_rent != null) search.set('min_rent', String(params.min_rent));
-    if (params.max_rent != null) search.set('max_rent', String(params.max_rent));
-    if (params.bedrooms != null) search.set('bedrooms', String(params.bedrooms));
-    if (params.available_before) search.set('available_before', params.available_before);
-    if (params.skip != null) search.set('skip', String(params.skip));
-    if (params.limit != null) search.set('limit', String(params.limit));
+    if (params.status != null) search.set("status", params.status);
+    if (params.city) search.set("city", params.city);
+    if (params.min_rent != null)
+      search.set("min_rent", String(params.min_rent));
+    if (params.max_rent != null)
+      search.set("max_rent", String(params.max_rent));
+    if (params.bedrooms != null)
+      search.set("bedrooms", String(params.bedrooms));
+    if (params.available_before)
+      search.set("available_before", params.available_before);
+    if (params.skip != null) search.set("skip", String(params.skip));
+    if (params.limit != null) search.set("limit", String(params.limit));
     const qs = search.toString();
-    return fetchAPI<ListingRead[]>(`/api/listings${qs ? `?${qs}` : ''}`);
+    return fetchAPI<ListingRead[]>(`/api/listings${qs ? `?${qs}` : ""}`);
   },
 
   async get(id: string): Promise<ListingRead> {
@@ -253,25 +291,35 @@ export const listingsAPI = {
     return fetchAPI<ListingSummary>(`/api/listings/${id}/summary`);
   },
 
+  async getMarketInsights(days = 14): Promise<MarketInsights> {
+    const search = new URLSearchParams({ days: String(days) });
+    return fetchAPI<MarketInsights>(
+      `/api/listings/market-insights?${search.toString()}`,
+    );
+  },
+
   async create(data: ListingCreatePayload): Promise<ListingRead> {
-    return fetchAPI<ListingRead>('/api/listings/', {
-      method: 'POST',
+    return fetchAPI<ListingRead>("/api/listings/", {
+      method: "POST",
       body: JSON.stringify(data),
     });
   },
 
-  async update(id: string, data: Partial<ListingCreatePayload>): Promise<ListingRead> {
+  async update(
+    id: string,
+    data: Partial<ListingCreatePayload>,
+  ): Promise<ListingRead> {
     return fetchAPI<ListingRead>(`/api/listings/${id}`, {
-      method: 'PATCH',
+      method: "PATCH",
       body: JSON.stringify(data),
     });
   },
 
   async delete(id: string): Promise<void> {
     const res = await fetch(`${API_BASE_URL}/api/listings/${id}`, {
-      method: 'DELETE',
+      method: "DELETE",
       headers: {
-        Authorization: `Bearer ${localStorage.getItem('access_token') || ''}`,
+        Authorization: `Bearer ${localStorage.getItem("access_token") || ""}`,
       },
     });
     if (!res.ok) {
@@ -282,22 +330,22 @@ export const listingsAPI = {
 
   async uploadPhotos(listingId: string, files: File[]): Promise<ListingRead> {
     const formData = new FormData();
-    files.forEach((f) => formData.append('files', f));
-    return fetchAPIFormData<ListingRead>(
-      `/api/listings/${listingId}/photos`,
-      { method: 'POST', body: formData }
-    );
+    files.forEach((f) => formData.append("files", f));
+    return fetchAPIFormData<ListingRead>(`/api/listings/${listingId}/photos`, {
+      method: "POST",
+      body: formData,
+    });
   },
 
   async deletePhoto(listingId: string, photoIndex: number): Promise<void> {
     const res = await fetch(
       `${API_BASE_URL}/api/listings/${listingId}/photos/${photoIndex}`,
       {
-        method: 'DELETE',
+        method: "DELETE",
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('access_token') || ''}`,
+          Authorization: `Bearer ${localStorage.getItem("access_token") || ""}`,
         },
-      }
+      },
     );
     if (!res.ok) {
       const err = await res.json().catch(() => null);
@@ -309,12 +357,12 @@ export const listingsAPI = {
 // ============== Bids (renter only for place/withdraw; landlord for list) ==============
 
 export type BidStatus =
-  | 'active'
-  | 'outbid'
-  | 'won'
-  | 'lost'
-  | 'withdrawn'
-  | 'refunded';
+  | "active"
+  | "outbid"
+  | "won"
+  | "lost"
+  | "withdrawn"
+  | "refunded";
 
 export interface BidRead {
   id: string;
@@ -330,13 +378,13 @@ export interface BidRead {
 export const bidsAPI = {
   async place(listingId: string, amountCents: number): Promise<BidRead> {
     return fetchAPI<BidRead>(`/api/listings/${listingId}/bids`, {
-      method: 'POST',
+      method: "POST",
       body: JSON.stringify({ amount: amountCents }),
     });
   },
 
   async getMyBids(): Promise<BidRead[]> {
-    return fetchAPI<BidRead[]>('/api/users/me/bids');
+    return fetchAPI<BidRead[]>("/api/users/me/bids");
   },
 
   async getForListing(listingId: string): Promise<BidRead[]> {
@@ -345,40 +393,43 @@ export const bidsAPI = {
 
   async withdraw(bidId: string): Promise<BidRead> {
     return fetchAPI<BidRead>(`/api/bids/${bidId}/withdraw`, {
-      method: 'POST',
+      method: "POST",
     });
   },
 };
 
 export const authAPI = {
   async register(data: UserCreate): Promise<UserRead> {
-    return fetchAPI<UserRead>('/auth/api/auth/register', {
-      method: 'POST',
+    return fetchAPI<UserRead>("/auth/api/auth/register", {
+      method: "POST",
       body: JSON.stringify(data),
     });
   },
 
   async login(data: LoginRequest): Promise<Token> {
-    return fetchAPI<Token>('/auth/api/auth/login', {
-      method: 'POST',
+    return fetchAPI<Token>("/auth/api/auth/login", {
+      method: "POST",
       body: JSON.stringify(data),
     });
   },
 
   async loginWithGoogle(data: GoogleLoginRequest): Promise<Token> {
-    return fetchAPI<Token>('/auth/api/auth/google', {
-      method: 'POST',
+    return fetchAPI<Token>("/auth/api/auth/google", {
+      method: "POST",
       body: JSON.stringify(data),
     });
   },
 
   async getCurrentUser(): Promise<UserRead> {
-    return fetchAPI<UserRead>('/auth/api/auth/me');
+    return fetchAPI<UserRead>("/auth/api/auth/me");
   },
 
-  async changePassword(currentPassword: string, newPassword: string): Promise<void> {
-    return fetchAPI<void>('/auth/api/auth/change-password', {
-      method: 'POST',
+  async changePassword(
+    currentPassword: string,
+    newPassword: string,
+  ): Promise<void> {
+    return fetchAPI<void>("/auth/api/auth/change-password", {
+      method: "POST",
       body: JSON.stringify({
         current_password: currentPassword,
         new_password: newPassword,
@@ -387,31 +438,39 @@ export const authAPI = {
   },
 
   async setStripeAccount(stripeAccountId: string): Promise<UserRead> {
-    return fetchAPI<UserRead>('/auth/api/auth/stripe-account', {
-      method: 'POST',
+    return fetchAPI<UserRead>("/auth/api/auth/stripe-account", {
+      method: "POST",
       body: JSON.stringify({ stripe_account_id: stripeAccountId }),
     });
   },
 
   async beginStripeConnectOnboarding(): Promise<StripeConnectOnboardResponse> {
-    return fetchAPI<StripeConnectOnboardResponse>('/auth/api/auth/stripe/connect/onboard', {
-      method: 'POST',
-    });
+    return fetchAPI<StripeConnectOnboardResponse>(
+      "/auth/api/auth/stripe/connect/onboard",
+      {
+        method: "POST",
+      },
+    );
   },
 
   async getStripeConnectStatus(): Promise<StripeConnectStatusResponse> {
-    return fetchAPI<StripeConnectStatusResponse>('/auth/api/auth/stripe/connect/status');
+    return fetchAPI<StripeConnectStatusResponse>(
+      "/auth/api/auth/stripe/connect/status",
+    );
   },
 
   async createStripeSetupIntent(): Promise<StripeSetupIntentResponse> {
-    return fetchAPI<StripeSetupIntentResponse>('/auth/api/auth/stripe/setup-intent', {
-      method: 'POST',
-    });
+    return fetchAPI<StripeSetupIntentResponse>(
+      "/auth/api/auth/stripe/setup-intent",
+      {
+        method: "POST",
+      },
+    );
   },
 
   async setStripePaymentMethod(paymentMethodId: string): Promise<UserRead> {
-    return fetchAPI<UserRead>('/auth/api/auth/stripe-payment-method', {
-      method: 'POST',
+    return fetchAPI<UserRead>("/auth/api/auth/stripe-payment-method", {
+      method: "POST",
       body: JSON.stringify({ payment_method_id: paymentMethodId }),
     });
   },
