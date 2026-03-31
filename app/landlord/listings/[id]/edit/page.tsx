@@ -14,6 +14,7 @@ import {
   bidsAPI,
   type BidRead,
 } from '../../../../lib/api';
+import { ListingsShell } from '../../../../listings/components/ListingsChrome';
 
 const STATUS_OPTIONS: { value: ListingStatus; label: string }[] = [
   { value: 'draft', label: 'Draft' },
@@ -162,35 +163,35 @@ export default function EditListingPage() {
 
   if (!user || user.user_type !== 'landlord') {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-gray-600">Only landlords can edit listings.</p>
-        <Link href="/landlord" className="ml-2 text-[#0fa8e2] font-semibold">Dashboard</Link>
+      <div className="min-h-screen flex items-center justify-center bg-[#030711]">
+        <p className="ds-body">Only landlords can edit listings.</p>
+        <Link href="/landlord" className="ml-2 ds-footnote text-cyan-300 font-medium">Dashboard</Link>
       </div>
     );
   }
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#0fa8e2]"></div>
+      <div className="min-h-screen flex items-center justify-center bg-[#030711]">
+        <div className="w-10 h-10 rounded-full border-2 border-cyan-400/20 border-t-cyan-400 animate-spin" />
       </div>
     );
   }
 
   if (error && !listing) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-red-600">{error}</p>
-        <Link href="/landlord" className="ml-2 text-[#0fa8e2] font-semibold">Dashboard</Link>
+      <div className="min-h-screen flex items-center justify-center bg-[#030711]">
+        <p className="ds-body text-red-300">{error}</p>
+        <Link href="/landlord" className="ml-2 ds-footnote text-cyan-300 font-medium">Dashboard</Link>
       </div>
     );
   }
 
   if (!listing || listing.landlord_id !== user.id) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-gray-600">Listing not found or you don’t have permission to edit it.</p>
-        <Link href="/landlord" className="ml-2 text-[#0fa8e2] font-semibold">Dashboard</Link>
+      <div className="min-h-screen flex items-center justify-center bg-[#030711]">
+        <p className="ds-body">Listing not found or you don&apos;t have permission to edit it.</p>
+        <Link href="/landlord" className="ml-2 ds-footnote text-cyan-300 font-medium">Dashboard</Link>
       </div>
     );
   }
@@ -199,50 +200,48 @@ export default function EditListingPage() {
   const canAddPhotos = photos.length < 10;
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-          <Link href="/landlord" className="flex items-center gap-3">
-            <div className="w-11 h-11 bg-[#0fa8e2] rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-xl">T</span>
-            </div>
-            <span className="text-gray-900 font-semibold text-2xl">TenRent</span>
-          </Link>
-          <div className="flex gap-4">
-            <Link href={`/listings/${listing.id}`} className="text-gray-600 hover:text-gray-900">
-              View listing
-            </Link>
-            <Link href="/landlord" className="text-gray-600 hover:text-gray-900">← Dashboard</Link>
-          </div>
-        </div>
-      </header>
+    <ListingsShell maxWidthClassName="max-w-2xl">
+      <div className="flex items-center justify-between mb-6">
+        <Link
+          href="/landlord"
+          className="inline-flex items-center gap-2 ds-footnote text-white/60 hover:text-white transition-colors"
+        >
+          <span>←</span> Dashboard
+        </Link>
+        <Link
+          href={`/listings/${listing.id}`}
+          className="ds-footnote text-cyan-300 font-medium hover:text-cyan-200 transition-colors"
+        >
+          View listing →
+        </Link>
+      </div>
 
-      <main className="max-w-2xl mx-auto px-6 py-8">
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">Edit listing</h1>
-        <p className="text-gray-600 mb-6">{listing.address_line_1}, {listing.city}</p>
+      <div className="ds-card-lg p-6 md:p-8 mb-6">
+        <h1 className="ds-h5 mb-1">Edit listing</h1>
+        <p className="ds-footnote mb-6">{listing.address_line_1}, {listing.city}</p>
 
-        {/* Bids on this listing */}
-        <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-3">Bids</h2>
+        {/* Bids section */}
+        <div className="ds-panel rounded-[10px] p-4 mb-6">
+          <h2 className="ds-headline text-[16px] mb-3">Bids</h2>
           {loadingBids ? (
             <div className="flex justify-center py-4">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#0fa8e2]" />
+              <div className="w-8 h-8 rounded-full border-2 border-cyan-400/20 border-t-cyan-400 animate-spin" />
             </div>
           ) : bids.length === 0 ? (
-            <p className="text-sm text-gray-600">No bids yet.</p>
+            <p className="ds-footnote">No bids yet.</p>
           ) : (
-            <div className="space-y-2 text-sm">
+            <div className="space-y-2">
               {bids.map((bid) => (
                 <div
                   key={bid.id}
-                  className="flex items-center justify-between border border-gray-100 rounded-lg px-3 py-2"
+                  className="flex items-center justify-between ds-panel rounded-lg px-3 py-2"
                 >
                   <div>
-                    <p className="font-semibold text-gray-900">
-                      ${(bid.amount / 100).toFixed(2)} / mo • {bid.status}
+                    <p className="ds-body-medium text-[13px]">
+                      ${(bid.amount / 100).toFixed(2)} / mo
                     </p>
-                    <p className="text-xs text-gray-500">
-                      Placed {new Date(bid.created_at).toLocaleString()}
+                    <p className="ds-small">
+                      {bid.status} · {new Date(bid.created_at).toLocaleString()}
                     </p>
                   </div>
                 </div>
@@ -251,9 +250,9 @@ export default function EditListingPage() {
           )}
         </div>
 
-        {/* Photos — Landlord only */}
-        <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-3">Photos ({photos.length}/10)</h2>
+        {/* Photos section */}
+        <div className="ds-panel rounded-[10px] p-4 mb-6">
+          <h2 className="ds-headline text-[16px] mb-3">Photos ({photos.length}/10)</h2>
           <div className="flex flex-wrap gap-3">
             {photos.map((url, i) => (
               <div key={i} className="relative group">
@@ -262,20 +261,20 @@ export default function EditListingPage() {
                   alt={`Photo ${i + 1}`}
                   width={120}
                   height={90}
-                  className="rounded-lg object-cover w-[120px] h-[90px]"
+                  className="rounded-[10px] object-cover w-[120px] h-[90px] border border-white/10"
                   unoptimized
                 />
                 <button
                   type="button"
                   onClick={() => handleDeletePhoto(i)}
-                  className="absolute top-1 right-1 w-6 h-6 bg-red-500 text-white rounded text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity"
+                  className="absolute top-1 right-1 w-6 h-6 bg-red-500/90 text-white rounded text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity"
                 >
                   ×
                 </button>
               </div>
             ))}
             {canAddPhotos && (
-              <label className="w-[120px] h-[90px] border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center cursor-pointer hover:border-[#0fa8e2] transition-colors">
+              <label className="w-[120px] h-[90px] border border-dashed border-white/20 rounded-[10px] flex items-center justify-center cursor-pointer hover:border-cyan-400/50 transition-colors">
                 <input
                   type="file"
                   accept="image/*"
@@ -284,181 +283,89 @@ export default function EditListingPage() {
                   onChange={handlePhotoUpload}
                   disabled={uploading}
                 />
-                <span className="text-gray-500 text-sm">{uploading ? '…' : '+ Add'}</span>
+                <span className="ds-small">{uploading ? '…' : '+ Add'}</span>
               </label>
             )}
           </div>
         </div>
 
         {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">
+          <div className="ds-pill-red px-4 py-3 rounded-[10px] mb-6 text-[13px]">
             {error}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-6 bg-white rounded-xl shadow-sm p-6">
+        {/* Edit form */}
+        <form onSubmit={handleSubmit} className="space-y-5">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Address line 1 *</label>
-            <input
-              type="text"
-              required
-              value={address_line_1}
-              onChange={(e) => setAddress_line_1(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2"
-            />
+            <label className="ds-input-label">Address line 1 *</label>
+            <input type="text" required value={address_line_1} onChange={(e) => setAddress_line_1(e.target.value)} className="ds-input" />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Address line 2</label>
-            <input
-              type="text"
-              value={address_line_2}
-              onChange={(e) => setAddress_line_2(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2"
-            />
+            <label className="ds-input-label">Address line 2</label>
+            <input type="text" value={address_line_2} onChange={(e) => setAddress_line_2(e.target.value)} className="ds-input" />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">City *</label>
-              <input
-                type="text"
-                required
-                value={city}
-                onChange={(e) => setCity(e.target.value)}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2"
-              />
+              <label className="ds-input-label">City *</label>
+              <input type="text" required value={city} onChange={(e) => setCity(e.target.value)} className="ds-input" />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">State *</label>
-              <input
-                type="text"
-                required
-                value={state}
-                onChange={(e) => setState(e.target.value)}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2"
-              />
+              <label className="ds-input-label">State *</label>
+              <input type="text" required value={state} onChange={(e) => setState(e.target.value)} className="ds-input" />
             </div>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">ZIP code *</label>
-            <input
-              type="text"
-              required
-              value={zip_code}
-              onChange={(e) => setZip_code(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 max-w-[140px]"
-            />
+            <label className="ds-input-label">ZIP code *</label>
+            <input type="text" required value={zip_code} onChange={(e) => setZip_code(e.target.value)} className="ds-input max-w-[140px]" />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Monthly rent ($) *</label>
-              <input
-                type="number"
-                step="0.01"
-                min="0"
-                required
-                value={monthly_rent}
-                onChange={(e) => setMonthly_rent(e.target.value)}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2"
-              />
+              <label className="ds-input-label">Monthly rent ($) *</label>
+              <input type="number" step="0.01" min="0" required value={monthly_rent} onChange={(e) => setMonthly_rent(e.target.value)} className="ds-input" />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Minimum bid ($) *</label>
-              <input
-                type="number"
-                step="0.01"
-                min="0"
-                required
-                value={minimum_bid}
-                onChange={(e) => setMinimum_bid(e.target.value)}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2"
-              />
+              <label className="ds-input-label">Minimum bid ($) *</label>
+              <input type="number" step="0.01" min="0" required value={minimum_bid} onChange={(e) => setMinimum_bid(e.target.value)} className="ds-input" />
             </div>
           </div>
           <div className="grid grid-cols-3 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Bedrooms *</label>
-              <input
-                type="number"
-                min="0"
-                required
-                value={bedrooms}
-                onChange={(e) => setBedrooms(e.target.value)}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2"
-              />
+              <label className="ds-input-label">Bedrooms *</label>
+              <input type="number" min="0" required value={bedrooms} onChange={(e) => setBedrooms(e.target.value)} className="ds-input" />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Bathrooms *</label>
-              <input
-                type="number"
-                step="0.1"
-                min="0"
-                required
-                value={bathrooms}
-                onChange={(e) => setBathrooms(e.target.value)}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2"
-              />
+              <label className="ds-input-label">Bathrooms *</label>
+              <input type="number" step="0.1" min="0" required value={bathrooms} onChange={(e) => setBathrooms(e.target.value)} className="ds-input" />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Sq ft</label>
-              <input
-                type="number"
-                min="0"
-                value={square_feet}
-                onChange={(e) => setSquare_feet(e.target.value)}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2"
-              />
+              <label className="ds-input-label">Sq ft</label>
+              <input type="number" min="0" value={square_feet} onChange={(e) => setSquare_feet(e.target.value)} className="ds-input" />
             </div>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
-            <textarea
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              rows={4}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2"
-            />
+            <label className="ds-input-label">Description</label>
+            <textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={4} className="ds-input h-auto py-2" />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Available date *</label>
-            <input
-              type="date"
-              required
-              value={available_date}
-              onChange={(e) => setAvailable_date(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 max-w-[200px]"
-            />
+            <label className="ds-input-label">Available date *</label>
+            <input type="date" required value={available_date} onChange={(e) => setAvailable_date(e.target.value)} className="ds-input max-w-[200px]" />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Bidding starts *</label>
-              <input
-                type="datetime-local"
-                required
-                value={bidding_start}
-                onChange={(e) => setBidding_start(e.target.value)}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2"
-              />
+              <label className="ds-input-label">Bidding starts *</label>
+              <input type="datetime-local" required value={bidding_start} onChange={(e) => setBidding_start(e.target.value)} className="ds-input" />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Bidding ends *</label>
-              <input
-                type="datetime-local"
-                required
-                value={bidding_end}
-                onChange={(e) => setBidding_end(e.target.value)}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2"
-              />
+              <label className="ds-input-label">Bidding ends *</label>
+              <input type="datetime-local" required value={bidding_end} onChange={(e) => setBidding_end(e.target.value)} className="ds-input" />
             </div>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
-            <select
-              value={status}
-              onChange={(e) => setStatus(e.target.value as ListingStatus)}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 max-w-[200px]"
-            >
+            <label className="ds-input-label">Status</label>
+            <select value={status} onChange={(e) => setStatus(e.target.value as ListingStatus)} className="ds-input max-w-[200px]">
               {STATUS_OPTIONS.map((o) => (
-                <option key={o.value} value={o.value}>{o.label}</option>
+                <option key={o.value} value={o.value} className="bg-[#0b1320]">{o.label}</option>
               ))}
             </select>
           </div>
@@ -466,19 +373,19 @@ export default function EditListingPage() {
             <button
               type="submit"
               disabled={saving}
-              className="bg-[#0fa8e2] text-white px-6 py-2.5 rounded-lg font-semibold hover:bg-[#0d8ec4] disabled:opacity-50 transition-colors"
+              className="ds-btn ds-btn-primary h-11 px-6 text-[14px] rounded-[10px] disabled:opacity-50"
             >
               {saving ? 'Saving…' : 'Save changes'}
             </button>
             <Link
               href={`/listings/${listing.id}`}
-              className="bg-gray-200 text-gray-800 px-6 py-2.5 rounded-lg font-semibold hover:bg-gray-300 transition-colors"
+              className="ds-btn ds-btn-ghost h-11 px-6 text-[14px] rounded-[10px]"
             >
               View listing
             </Link>
           </div>
         </form>
-      </main>
-    </div>
+      </div>
+    </ListingsShell>
   );
 }

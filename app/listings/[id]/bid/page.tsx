@@ -117,7 +117,7 @@ export default function PlaceBidPage() {
           action={
             <Link
               href="/listings"
-              className="text-cyan-300 font-semibold hover:text-cyan-200 transition-colors"
+              className="ds-footnote text-cyan-300 font-medium hover:text-cyan-200 transition-colors"
             >
               Browse listings
             </Link>
@@ -136,7 +136,7 @@ export default function PlaceBidPage() {
           action={
             <Link
               href="/renter"
-              className="text-cyan-300 font-semibold hover:text-cyan-200 transition-colors"
+              className="ds-footnote text-cyan-300 font-medium hover:text-cyan-200 transition-colors"
             >
               Go to renter dashboard
             </Link>
@@ -179,26 +179,27 @@ export default function PlaceBidPage() {
       />
 
       <ListingsCard>
-        <h1 className="text-2xl font-semibold text-white mb-1">Place a bid</h1>
-        <p className="text-slate-300 mb-5">
+        <h1 className="ds-h5 mb-1">Place a bid</h1>
+        <p className="ds-footnote mb-5">
           {listing.address_line_1}, {listing.city}
         </p>
 
-        <div className="rounded-xl border border-white/10 bg-[#08101d]/90 p-4 mb-5 text-sm text-slate-300">
-          <p>
+        {/* Summary panel */}
+        <div className="ds-panel rounded-[10px] p-4 mb-5">
+          <p className="ds-footnote">
             Base rent:{" "}
-            <span className="text-white">
+            <span className="text-white font-medium">
               {formatCents(listing.monthly_rent)}/mo
             </span>
           </p>
-          <p className="mt-1">
+          <p className="ds-footnote mt-1">
             Minimum premium bid:{" "}
-            <span className="text-white">
+            <span className="text-white font-medium">
               {formatCents(listing.minimum_bid)}
             </span>
           </p>
           {summary?.highest_bid ? (
-            <p className="mt-1 text-cyan-200">
+            <p className="mt-1 ds-footnote text-cyan-300">
               Current high bid: +{formatCents(summary.highest_bid)} · Minimum to
               lead: +{formatCents(effectiveMinCents || listing.minimum_bid)}
             </p>
@@ -207,7 +208,7 @@ export default function PlaceBidPage() {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-1">
+            <label className="ds-input-label">
               Your bid (premium per month, $)
             </label>
             <input
@@ -220,23 +221,27 @@ export default function PlaceBidPage() {
               placeholder={(
                 (effectiveMinCents || listing.minimum_bid) / 100
               ).toFixed(2)}
-              className="w-full rounded-xl border border-white/15 bg-white/5 text-slate-100 placeholder:text-slate-400 px-3 py-2 outline-none focus:border-cyan-400/70 transition-colors"
+              className="ds-input h-11"
             />
           </div>
 
-          {error && <div className="text-red-300 text-sm">{error}</div>}
+          {error && (
+            <div className="ds-pill-red px-3 py-2 rounded-lg text-[13px]">
+              {error}
+            </div>
+          )}
 
           <div className="flex gap-3">
             <button
               type="submit"
               disabled={submitting}
-              className="flex-1 bg-linear-to-r from-cyan-500 to-sky-600 text-white py-2.5 rounded-xl font-semibold hover:from-cyan-400 hover:to-sky-500 disabled:opacity-50 transition-all"
+              className="ds-btn ds-btn-primary flex-1 h-11 rounded-[10px] text-[14px] disabled:opacity-50"
             >
               {submitting ? "Placing bid..." : "Place bid"}
             </button>
             <Link
               href={`/listings/${listing.id}`}
-              className="bg-white/10 border border-white/20 text-slate-100 px-4 py-2.5 rounded-xl font-semibold hover:bg-white/15 transition-colors text-center"
+              className="ds-btn ds-btn-ghost h-11 px-5 rounded-[10px] text-[14px]"
             >
               Cancel
             </Link>

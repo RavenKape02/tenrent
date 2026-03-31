@@ -7,15 +7,15 @@ export default function ImageCarousel() {
     <div className="pb-16">
       <div className="w-full">
         <div className="text-center mb-8">
-          <h2 className="text-2xl md:text-4xl text-white font-light">
+          <h2 className="ds-h5 mb-3">
             Featured Properties
           </h2>
-          <p className="text-gray-400 mt-4">
+          <p className="ds-body">
             Explore stunning rentals available now
           </p>
         </div>
 
-        <div className="relative overflow-hidden rounded-2xl">
+        <div className="relative overflow-hidden rounded-[10px]">
           <div className="flex w-max animate-scroll">
             {[...carouselImages, ...carouselImages].map((src, i) => (
               <div
@@ -26,7 +26,7 @@ export default function ImageCarousel() {
                   src={src}
                   alt={`Room ${(i % 9) + 1}`}
                   fill
-                  className="object-cover rounded-xl"
+                  className="object-cover rounded-[10px] border border-white/8"
                 />
               </div>
             ))}

@@ -7,6 +7,7 @@ import { CardElement, Elements, useElements, useStripe } from "@stripe/react-str
 import { loadStripe } from "@stripe/stripe-js";
 import { APIError, authAPI } from "../../lib/api";
 import { useAuth } from "../../contexts/AuthContext";
+import DashboardLayout from "../../components/DashboardLayout";
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || "");
 
@@ -53,33 +54,44 @@ function PaymentMethodForm() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <div className="rounded-lg border border-gray-200 bg-white px-3 py-3">
+      <div className="ds-panel rounded-[10px] px-4 py-4">
         <CardElement
           options={{
             hidePostalCode: true,
             style: {
               base: {
                 fontSize: "14px",
-                color: "#111827",
-                "::placeholder": { color: "#9ca3af" },
+                color: "#ffffff",
+                "::placeholder": { color: "rgba(255,255,255,0.4)" },
+              },
+              invalid: {
+                color: "#fca5a5",
               },
             },
           }}
         />
       </div>
-      {error && <p className="text-sm text-red-600">{error}</p>}
-      {success && <p className="text-sm text-green-700">{success}</p>}
-      <div className="flex gap-2">
+      {error && (
+        <div className="ds-pill-red px-3 py-2 rounded-lg text-[12px]">
+          {error}
+        </div>
+      )}
+      {success && (
+        <div className="ds-pill-green px-3 py-2 rounded-lg text-[12px]">
+          {success}
+        </div>
+      )}
+      <div className="flex gap-3">
         <button
           type="submit"
           disabled={submitting || !stripe}
-          className="rounded-lg bg-cyan-600 px-4 py-2 text-sm font-semibold text-white hover:bg-cyan-700 disabled:opacity-50"
+          className="ds-btn ds-btn-primary h-10 px-5 text-[13px] rounded-lg disabled:opacity-50"
         >
           {submitting ? "Saving..." : "Save card"}
         </button>
         <Link
           href="/renter"
-          className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50"
+          className="ds-btn ds-btn-ghost h-10 px-5 text-[13px] rounded-lg"
         >
           Cancel
         </Link>
@@ -102,24 +114,25 @@ export default function RenterPaymentMethodPage() {
   if (loading || !user) return null;
 
   return (
-    <main className="mx-auto max-w-xl px-6 py-10">
-      <h1 className="text-2xl font-bold text-gray-900">Add payment method</h1>
-      <p className="mt-1 text-sm text-gray-600">
-        Your card is stored with Stripe and used to authorize/capture winning bids.
-      </p>
-
-      <div className="mt-5 rounded-xl border border-gray-200 bg-gray-50 p-5">
-        {stripeUnavailable ? (
-          <p className="text-sm text-red-600">
-            Missing <code>NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY</code> in frontend env.
+    <DashboardLayout role="renter">
+      <main className="mx-auto max-w-lg px-6 py-10">
+        <div className="ds-card-lg p-6 md:p-8">
+          <h1 className="ds-h5 mb-1">Add payment method</h1>
+          <p className="ds-footnote mb-6">
+            Your card is stored with Stripe and used to authorize/capture winning bids.
           </p>
-        ) : (
-          <Elements stripe={stripePromise}>
-            <PaymentMethodForm />
-          </Elements>
-        )}
-      </div>
-    </main>
+
+          {stripeUnavailable ? (
+            <div className="ds-pill-red px-3 py-2 rounded-lg text-[12px]">
+              Missing <code className="font-mono">NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY</code> in frontend env.
+            </div>
+          ) : (
+            <Elements stripe={stripePromise}>
+              <PaymentMethodForm />
+            </Elements>
+          )}
+        </div>
+      </main>
+    </DashboardLayout>
   );
 }
-

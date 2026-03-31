@@ -223,10 +223,10 @@ export default function LandlordDashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#05090f]">
+      <div className="min-h-screen flex items-center justify-center bg-[#030711]">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-300 mx-auto" />
-          <p className="mt-4 text-slate-300">Loading...</p>
+          <div className="w-10 h-10 rounded-full border-2 border-cyan-400/20 border-t-cyan-400 animate-spin mx-auto" />
+          <p className="mt-4 ds-footnote">Loading...</p>
         </div>
       </div>
     );
@@ -277,41 +277,43 @@ export default function LandlordDashboard() {
 
   return (
     <ListingsShell>
-      <main className="space-y-8">
-        <section className="rounded-3xl border border-white/10 bg-[#0b1320]/85 p-6 md:p-8 shadow-[0_20px_70px_rgba(2,6,23,0.45)] backdrop-blur-sm">
+      <main className="space-y-6">
+        {/* Welcome */}
+        <section className="ds-card-lg p-6 md:p-8">
           <div className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
             <div>
-              <p className="mb-2 text-xs uppercase tracking-[0.2em] text-cyan-300/80">
+              <p className="ds-pill ds-pill-cyan inline-flex px-3 py-1 rounded-full mb-3 text-[11px] uppercase tracking-[0.14em]">
                 Landlord Dashboard
               </p>
-              <h1 className="mb-1 text-3xl font-bold text-white">
+              <h1 className="ds-h4 mb-1">
                 Welcome back, {user.first_name}
               </h1>
-              <p className="text-slate-300">
+              <p className="ds-body">
                 Manage your listings, monitor bidding activity, and optimize
                 portfolio performance.
               </p>
             </div>
             <Link
               href="/landlord/listings/new"
-              className="inline-flex items-center gap-2 rounded-xl bg-linear-to-r from-pink-500 to-rose-600 px-5 py-3 font-semibold text-white transition-all hover:from-pink-400 hover:to-rose-500 shadow-[0_10px_28px_rgba(236,72,153,0.35)] shrink-0"
+              className="ds-btn ds-btn-accent h-11 px-5 text-[14px] rounded-[10px] shrink-0"
             >
               <span>+</span> Create New Listing
             </Link>
           </div>
         </section>
 
+        {/* Stripe Connect */}
         {(!connectStatus?.account_id ||
           !connectStatus.charges_enabled ||
           !connectStatus.payouts_enabled) && (
-          <div className="rounded-2xl border border-amber-300/30 bg-amber-400/10 p-5 backdrop-blur-sm">
-            <p className="text-sm font-semibold text-amber-200">
+          <div className="ds-card-lg p-5 border-amber-400/20">
+            <p className="ds-footnote font-semibold text-amber-200">
               Connect Stripe to receive winning bid payouts.
             </p>
 
             {isTestMode ? (
               <>
-                <p className="mt-1 text-sm text-amber-100/90">
+                <p className="mt-1 ds-small text-amber-100/80">
                   <strong>Test Mode:</strong> Manually enter a Stripe connected
                   account ID to start testing immediately.
                 </p>
@@ -324,28 +326,28 @@ export default function LandlordDashboard() {
                     value={manualAccountId}
                     onChange={(e) => setManualAccountId(e.target.value)}
                     placeholder="acct_..."
-                    className="flex-1 rounded-lg border border-amber-300/40 bg-[#0b1320]/70 px-3 py-2 text-sm text-amber-100 placeholder:text-amber-200/50 focus:border-amber-300/70 focus:outline-none"
+                    className="ds-input flex-1"
                   />
                   <button
                     type="submit"
                     disabled={savingManualAccount || !manualAccountId.trim()}
-                    className="rounded-lg bg-amber-500 px-4 py-2 text-sm font-semibold text-white hover:bg-amber-400 disabled:opacity-50"
+                    className="ds-btn h-10 px-4 text-[13px] rounded-lg bg-amber-500 text-white border-none hover:bg-amber-400 disabled:opacity-50"
                   >
                     {savingManualAccount ? "Saving..." : "Save Account ID"}
                   </button>
                 </form>
                 {!connectLoading && connectStatus?.account_id && (
-                  <p className="mt-2 text-xs text-amber-100/90">
+                  <p className="mt-2 ds-small text-amber-100/80">
                     Current Account: {connectStatus.account_id}
                   </p>
                 )}
                 {stripeMessage && (
-                  <p className="mt-2 text-xs text-amber-200">{stripeMessage}</p>
+                  <p className="mt-2 ds-small text-amber-200">{stripeMessage}</p>
                 )}
               </>
             ) : (
               <>
-                <p className="mt-1 text-sm text-amber-100/90">
+                <p className="mt-1 ds-small text-amber-100/80">
                   Complete Stripe onboarding so charges and payouts are enabled
                   for your landlord account.
                 </p>
@@ -354,42 +356,44 @@ export default function LandlordDashboard() {
                     type="button"
                     onClick={handleStartConnect}
                     disabled={connectStarting}
-                    className="rounded-lg bg-amber-500 px-4 py-2 text-sm font-semibold text-white hover:bg-amber-400 disabled:opacity-50"
+                    className="ds-btn h-10 px-4 text-[13px] rounded-lg bg-amber-500 text-white border-none hover:bg-amber-400 disabled:opacity-50"
                   >
                     {connectStarting ? "Redirecting..." : "Connect Stripe"}
                   </button>
                   {!connectLoading && connectStatus?.account_id && (
-                    <span className="text-xs text-amber-100/90">
+                    <span className="ds-small text-amber-100/80">
                       Account: {connectStatus.account_id} · details submitted:{" "}
                       {connectStatus.details_submitted ? "yes" : "no"}
                     </span>
                   )}
                 </div>
                 {stripeMessage && (
-                  <p className="mt-2 text-xs text-amber-200">{stripeMessage}</p>
+                  <p className="mt-2 ds-small text-amber-200">{stripeMessage}</p>
                 )}
               </>
             )}
           </div>
         )}
 
+        {/* Charts */}
         <section className="grid grid-cols-1 gap-5 xl:grid-cols-12">
-          <div className="xl:col-span-8 rounded-2xl border border-white/10 bg-[#0b1320]/85 p-6 shadow-[0_12px_50px_rgba(2,6,23,0.45)] backdrop-blur-sm">
+          {/* Momentum chart */}
+          <div className="xl:col-span-8 ds-card-lg p-6">
             <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
               <div>
-                <p className="text-xs uppercase tracking-[0.18em] text-cyan-300/80">
+                <p className="ds-caption text-cyan-300/70 uppercase tracking-[0.14em] text-[11px]">
                   Listing Momentum
                 </p>
-                <h3 className="mt-1 text-xl font-semibold text-white">
+                <h3 className="mt-1 ds-headline">
                   Are you publishing consistently?
                 </h3>
               </div>
-              <span className="rounded-full border border-cyan-400/25 bg-cyan-500/10 px-2.5 py-1 text-xs font-medium text-cyan-200">
+              <span className="ds-pill ds-pill-cyan text-[11px]">
                 Last 12 days
               </span>
             </div>
 
-            <div className="rounded-xl border border-white/10 bg-[#08101b] p-4">
+            <div className="ds-panel rounded-[10px] p-4">
               <svg
                 viewBox={`0 0 ${listingMomentumChart.width} ${listingMomentumChart.height}`}
                 className="h-32 w-full"
@@ -403,8 +407,8 @@ export default function LandlordDashboard() {
                     x2="0"
                     y2="1"
                   >
-                    <stop offset="0%" stopColor="rgb(34 211 238 / 0.35)" />
-                    <stop offset="100%" stopColor="rgb(14 116 144 / 0.05)" />
+                    <stop offset="0%" stopColor="rgb(34 211 238 / 0.30)" />
+                    <stop offset="100%" stopColor="rgb(14 116 144 / 0.03)" />
                   </linearGradient>
                 </defs>
                 {listingMomentumChart.gridLines.map((y, index) => (
@@ -414,7 +418,7 @@ export default function LandlordDashboard() {
                     y1={y}
                     x2={listingMomentumChart.width}
                     y2={y}
-                    stroke="rgb(148 163 184 / 0.2)"
+                    stroke="rgb(148 163 184 / 0.12)"
                     strokeWidth="1"
                   />
                 ))}
@@ -426,28 +430,28 @@ export default function LandlordDashboard() {
                   points={listingMomentumChart.linePath}
                   fill="none"
                   stroke="rgb(103 232 249)"
-                  strokeWidth="2.5"
+                  strokeWidth="2"
                   strokeLinecap="round"
                   strokeLinejoin="round"
                 />
               </svg>
 
-              <div className="mt-3 grid grid-cols-3 gap-3 text-sm">
+              <div className="mt-4 grid grid-cols-3 gap-3">
                 <div>
-                  <p className="text-slate-400 text-xs">New in window</p>
+                  <p className="ds-small">New in window</p>
                   <p className="mt-1 text-lg font-semibold text-white">
                     {listingMomentum.recentTotal}
                   </p>
                 </div>
                 <div>
-                  <p className="text-slate-400 text-xs">Peak day</p>
+                  <p className="ds-small">Peak day</p>
                   <p className="mt-1 text-lg font-semibold text-emerald-300">
                     {listingMomentum.peak} on {listingMomentum.peakLabel}
                   </p>
                 </div>
                 <div>
-                  <p className="text-slate-400 text-xs">Total bids</p>
-                  <p className="mt-1 text-lg font-semibold text-cyan-200">
+                  <p className="ds-small">Total bids</p>
+                  <p className="mt-1 text-lg font-semibold text-cyan-300">
                     {totalBidsAcrossPortfolio}
                   </p>
                 </div>
@@ -455,64 +459,51 @@ export default function LandlordDashboard() {
             </div>
           </div>
 
-          <div className="xl:col-span-4 rounded-2xl border border-white/10 bg-[#0b1320]/85 p-6 shadow-[0_12px_50px_rgba(2,6,23,0.45)] backdrop-blur-sm">
-            <p className="text-xs uppercase tracking-[0.18em] text-cyan-300/80">
+          {/* Portfolio mix */}
+          <div className="xl:col-span-4 ds-card-lg p-6">
+            <p className="ds-caption text-cyan-300/70 uppercase tracking-[0.14em] text-[11px]">
               Portfolio Mix
             </p>
-            <h3 className="mt-1 text-xl font-semibold text-white">
-              Status Distribution
-            </h3>
+            <h3 className="mt-1 ds-headline">Status Distribution</h3>
 
             <div className="mt-5 flex items-center gap-4">
               <div
                 className="relative h-28 w-28 rounded-full"
                 style={{
-                  background: `conic-gradient(rgb(34 211 238) ${activeShare}%, rgb(71 85 105 / 0.45) ${activeShare}% 100%)`,
+                  background: `conic-gradient(rgb(34 211 238) ${activeShare}%, rgb(255 255 255 / 0.06) ${activeShare}% 100%)`,
                 }}
               >
                 <div className="absolute inset-2.5 flex flex-col items-center justify-center rounded-full bg-[#0b1320]">
                   <p className="text-2xl font-bold text-white">
                     {activeShare}%
                   </p>
-                  <p className="text-[11px] uppercase tracking-wide text-slate-300">
+                  <p className="ds-small text-[10px] uppercase tracking-wider">
                     active
                   </p>
                 </div>
               </div>
 
               <div className="space-y-2 text-sm">
-                <p className="text-slate-300">
-                  <span className="font-semibold text-cyan-200">
-                    {activeCount}
-                  </span>{" "}
-                  active
+                <p className="ds-footnote">
+                  <span className="font-semibold text-cyan-300">{activeCount}</span> active
                 </p>
-                <p className="text-slate-300">
-                  <span className="font-semibold text-amber-200">
-                    {draftCount}
-                  </span>{" "}
-                  drafts
+                <p className="ds-footnote">
+                  <span className="font-semibold text-amber-300">{draftCount}</span> drafts
                 </p>
-                <p className="text-slate-300">
-                  <span className="font-semibold text-blue-200">
-                    {closedCount}
-                  </span>{" "}
-                  closed
+                <p className="ds-footnote">
+                  <span className="font-semibold text-blue-300">{closedCount}</span> closed
                 </p>
-                <p className="text-slate-300">
-                  <span className="font-semibold text-emerald-200">
-                    {completedCount}
-                  </span>{" "}
-                  completed
+                <p className="ds-footnote">
+                  <span className="font-semibold text-emerald-300">{completedCount}</span> completed
                 </p>
               </div>
             </div>
 
-            <div className="mt-6 rounded-lg border border-cyan-300/20 bg-cyan-500/10 px-4 py-3">
-              <p className="text-xs uppercase tracking-wide text-cyan-200/80">
+            <div className="mt-6 ds-panel rounded-[10px] px-4 py-3">
+              <p className="ds-small uppercase tracking-[0.12em] text-cyan-300/60 text-[10px]">
                 Snapshot
               </p>
-              <p className="mt-1 text-sm text-cyan-100">
+              <p className="mt-1 ds-footnote text-cyan-100">
                 Highest current premium:{" "}
                 {highestBidPremium > 0
                   ? `+${formatCents(highestBidPremium)}`
@@ -522,17 +513,18 @@ export default function LandlordDashboard() {
           </div>
         </section>
 
-        <div className="overflow-hidden rounded-2xl border border-white/10 bg-[#0b1320]/85 shadow-[0_12px_50px_rgba(2,6,23,0.5)] backdrop-blur-sm">
-          <div className="border-b border-white/10">
+        {/* Listings table */}
+        <div className="ds-card-lg overflow-hidden">
+          <div className="border-b border-white/8">
             <nav className="flex overflow-x-auto -mb-px px-3">
               {TABS.map((tab) => (
                 <button
                   key={tab.value}
                   onClick={() => setActiveTab(tab.value)}
-                  className={`px-5 py-4 text-sm font-medium whitespace-nowrap border-b-2 transition-colors ${
+                  className={`px-5 py-4 text-[13px] font-medium whitespace-nowrap border-b-2 transition-all duration-200 ${
                     activeTab === tab.value
-                      ? "border-cyan-300 text-cyan-300"
-                      : "border-transparent text-slate-400 hover:text-slate-200 hover:border-slate-500"
+                      ? "border-cyan-400 text-cyan-300"
+                      : "border-transparent text-white/40 hover:text-white/70 hover:border-white/15"
                   }`}
                 >
                   {tab.label}
@@ -544,13 +536,13 @@ export default function LandlordDashboard() {
           <div className="p-6">
             {fetchLoading ? (
               <div className="flex justify-center py-12">
-                <div className="animate-spin rounded-full h-10 w-10 border-2 border-cyan-400/25 border-t-cyan-300" />
+                <div className="w-10 h-10 rounded-full border-2 border-cyan-400/20 border-t-cyan-400 animate-spin" />
               </div>
             ) : filtered.length === 0 ? (
               <div className="py-12 text-center">
-                <div className="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <div className="w-14 h-14 ds-panel rounded-full flex items-center justify-center mx-auto mb-4">
                   <svg
-                    className="w-8 h-8 text-slate-400"
+                    className="w-7 h-7 text-white/30"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -558,17 +550,17 @@ export default function LandlordDashboard() {
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
-                      strokeWidth={2}
+                      strokeWidth={1.5}
                       d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
                     />
                   </svg>
                 </div>
-                <h3 className="text-lg font-semibold text-white mb-2">
+                <h3 className="ds-headline mb-2">
                   {activeTab === "all"
                     ? "No listings yet"
                     : `No ${activeTab} listings`}
                 </h3>
-                <p className="text-slate-300 mb-6">
+                <p className="ds-body mb-6">
                   {activeTab === "all" || activeTab === "draft"
                     ? "Create your first listing to start receiving bids."
                     : `You don't have any listings with status "${activeTab}".`}
@@ -576,18 +568,18 @@ export default function LandlordDashboard() {
                 {(activeTab === "all" || activeTab === "draft") && (
                   <Link
                     href="/landlord/listings/new"
-                    className="inline-block rounded-lg bg-linear-to-r from-pink-500 to-rose-600 px-6 py-3 font-semibold text-white hover:from-pink-400 hover:to-rose-500 transition-all"
+                    className="ds-btn ds-btn-accent h-10 px-5 text-[14px] rounded-[10px]"
                   >
                     + Create Listing
                   </Link>
                 )}
               </div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
                 {filtered.map((listing) => (
                   <div key={listing.id} className="flex flex-col">
                     <ListingCard listing={listing} compact={false} asLandlord />
-                    <p className="mt-2 text-xs text-slate-300">
+                    <p className="mt-2 ds-small">
                       {summaries[listing.id]
                         ? `${summaries[listing.id].total_bids} bid${summaries[listing.id].total_bids === 1 ? "" : "s"}${
                             summaries[listing.id].highest_bid
@@ -599,13 +591,13 @@ export default function LandlordDashboard() {
                     <div className="mt-2 flex gap-3">
                       <Link
                         href={`/landlord/listings/${listing.id}/edit`}
-                        className="text-sm text-cyan-300 font-medium hover:text-cyan-200"
+                        className="ds-footnote text-cyan-300 font-medium hover:text-cyan-200 transition-colors"
                       >
                         Edit / Bids
                       </Link>
                       <Link
                         href={`/listings/${listing.id}`}
-                        className="text-sm text-slate-300 font-medium hover:text-white"
+                        className="ds-footnote text-white/50 font-medium hover:text-white transition-colors"
                       >
                         View
                       </Link>

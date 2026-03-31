@@ -14,15 +14,21 @@ const STATUS_LABELS: Record<string, string> = {
   cancelled: 'Cancelled',
 };
 
+const STATUS_PILL: Record<string, string> = {
+  active: 'ds-pill-green',
+  draft: 'ds-pill-neutral',
+  bidding_closed: 'ds-pill-amber',
+  completed: 'ds-pill-cyan',
+  cancelled: 'ds-pill-red',
+};
+
 function formatCents(cents: number): string {
   return `$${(cents / 100).toLocaleString()}`;
 }
 
 interface ListingCardProps {
   listing: ListingRead;
-  /** Optional: show as compact card (e.g. in landlord dashboard) */
   compact?: boolean;
-  /** Optional: show "View Bids" instead of "View & Bid" for landlord */
   asLandlord?: boolean;
 }
 
@@ -35,41 +41,44 @@ export default function ListingCard({
     listing.photos && listing.photos.length > 0
       ? getListingImageUrl(listing.photos[0])
       : null;
-  const address =
-    [listing.address_line_1, listing.address_line_2].filter(Boolean).join(', ') +
-    `, ${listing.city}, ${listing.state}`;
   const isActive = listing.status === 'active';
 
   return (
-    <div className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-shadow">
-      <div className="relative">
+    <div className="ds-card ds-hover-lift overflow-hidden group">
+      {/* Image */}
+      <div className="relative overflow-hidden">
         {photo ? (
           <Image
             src={photo}
-            alt={address}
+            alt={`${listing.address_line_1}, ${listing.city}`}
             width={376}
-            height={277}
-            className="w-full h-48 object-cover"
+            height={240}
+            className="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-105"
             unoptimized
           />
         ) : (
-          <div className="w-full h-48 bg-muted flex items-center justify-center text-muted-foreground">
-            <span>No photo</span>
+          <div className="w-full h-48 bg-white/[0.03] flex items-center justify-center">
+            <svg className="w-10 h-10 text-white/20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 22V12h6v10" />
+            </svg>
           </div>
         )}
-        <span
-          className={`absolute top-3 left-3 text-white text-xs px-3 py-1 rounded uppercase font-semibold ${
-            isActive ? 'bg-green-500' : 'bg-gray-600'
-          }`}
-        >
+        {/* Gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+
+        {/* Status badge */}
+        <span className={`ds-pill absolute top-3 left-3 ${STATUS_PILL[listing.status] ?? 'ds-pill-neutral'}`}>
           {STATUS_LABELS[listing.status] ?? listing.status}
         </span>
       </div>
-      <div className="p-5">
-        <div className="flex items-center gap-2 text-gray-500 text-sm mb-2">
+
+      {/* Content */}
+      <div className="p-4">
+        {/* Location */}
+        <div className="flex items-center gap-2 mb-2">
           <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-4 w-4 flex-shrink-0"
+            className="h-3.5 w-3.5 text-cyan-400/70 flex-shrink-0"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -87,35 +96,40 @@ export default function ListingCard({
               d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
             />
           </svg>
-          <span className="truncate">{listing.city}, {listing.state}</span>
+          <span className="ds-small text-white/50 truncate">
+            {listing.city}, {listing.state}
+          </span>
         </div>
-        <h3 className="font-bold text-gray-900 mb-3 line-clamp-1">
+
+        {/* Address */}
+        <h3 className="font-semibold text-[15px] text-white mb-3 line-clamp-1 leading-tight">
           {listing.address_line_1}
           {listing.address_line_2 ? `, ${listing.address_line_2}` : ''}
         </h3>
 
         {!compact && (
           <>
-            <div className="bg-blue-50 rounded-lg p-3 mb-3">
-              <div className="flex justify-between items-center mb-2">
-                <span className="text-xs text-gray-600">Base Rent:</span>
-                <span className="text-sm font-semibold text-gray-900">
+            {/* Pricing */}
+            <div className="ds-panel rounded-lg p-3 mb-3">
+              <div className="flex justify-between items-center mb-1.5">
+                <span className="ds-small text-white/40">Base Rent</span>
+                <span className="text-[14px] font-semibold text-white">
                   {formatCents(listing.monthly_rent)}/mo
                 </span>
               </div>
-              <div className="flex justify-between items-center mb-2">
-                <span className="text-xs text-gray-600">Min Bid:</span>
-                <span className="text-sm font-semibold text-[#ff214f]">
+              <div className="flex justify-between items-center">
+                <span className="ds-small text-white/40">Min Bid</span>
+                <span className="text-[14px] font-semibold text-cyan-300">
                   +{formatCents(listing.minimum_bid)}
                 </span>
               </div>
             </div>
 
+            {/* Countdown */}
             {isActive && (
-              <div className="flex items-center gap-2 mb-3 text-orange-600 bg-orange-50 px-3 py-2 rounded">
+              <div className="flex items-center gap-2 mb-3 ds-pill-amber px-3 py-2 rounded-lg">
                 <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-4 w-4"
+                  className="h-3.5 w-3.5 flex-shrink-0"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -127,48 +141,43 @@ export default function ListingCard({
                     d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
                   />
                 </svg>
-                <span className="text-sm font-semibold">
+                <span className="text-[13px] font-medium">
                   <CountdownTimer endIso={listing.bidding_end} />
                 </span>
               </div>
             )}
 
+            {/* Description */}
             {listing.description && (
-              <p className="text-gray-500 text-xs mb-4 line-clamp-2">
+              <p className="ds-small line-clamp-2 mb-3">
                 {listing.description}
               </p>
             )}
           </>
         )}
 
+        {/* Stats + CTA */}
         <div className="flex flex-col gap-3">
-          <div className="flex gap-3 bg-blue-50 border border-blue-500/30 rounded px-2 py-2 w-fit">
-            <div className="text-center">
-              <span className="text-blue-600 font-bold text-sm">
-                {listing.bedrooms}
-              </span>
-              <p className="text-gray-500 text-[10px]">bedrooms</p>
-            </div>
-            <div className="text-center">
-              <span className="text-blue-600 font-bold text-sm">
-                {Number(listing.bathrooms)}
-              </span>
-              <p className="text-gray-500 text-[10px]">bathrooms</p>
-            </div>
+          {/* Property specs */}
+          <div className="flex gap-2">
+            <span className="ds-pill ds-pill-neutral text-[11px] px-2 py-1">
+              {listing.bedrooms} bed
+            </span>
+            <span className="ds-pill ds-pill-neutral text-[11px] px-2 py-1">
+              {Number(listing.bathrooms)} bath
+            </span>
             {listing.square_feet != null && (
-              <div className="text-center">
-                <span className="text-blue-600 font-bold text-sm">
-                  {listing.square_feet}
-                </span>
-                <p className="text-gray-500 text-[10px]">sq ft</p>
-              </div>
+              <span className="ds-pill ds-pill-neutral text-[11px] px-2 py-1">
+                {listing.square_feet} sqft
+              </span>
             )}
           </div>
+
           <Link
             href={`/listings/${listing.id}`}
-            className="bg-[#14395b] text-white px-4 py-3 rounded-lg hover:bg-[#0d2a42] transition-colors w-full font-semibold text-center"
+            className="ds-btn ds-btn-primary w-full text-[13px] h-10 rounded-lg"
           >
-            {asLandlord ? 'View listing' : 'View & Bid'}
+            {asLandlord ? 'View Listing' : 'View & Bid'}
           </Link>
         </div>
       </div>

@@ -98,7 +98,6 @@ export default function SignUpPage() {
   const handleGoogleSignUp = async () => {
     setError("");
 
-    // Ensure the user explicitly chooses renter vs landlord before using Google
     if (!formData.user_type) {
       setError(
         "Please select whether you are a renter or landlord before continuing with Google.",
@@ -109,7 +108,6 @@ export default function SignUpPage() {
     setLoading(true);
 
     try {
-      // Returns a Google OAuth access token via popup
       const accessToken = await getGoogleIdToken();
       const token = await authAPI.loginWithGoogle({
         access_token: accessToken,
@@ -139,51 +137,56 @@ export default function SignUpPage() {
     }
   };
 
-  const inputClass =
-    "h-7.75 w-full rounded-lg border border-[#e5e5e5] bg-white px-2.5 py-2 text-[12px] text-gray-900 shadow-[0px_1px_2px_0px_rgba(0,0,0,0.11)] focus:border-[#0fa8e2] focus:outline-none focus:ring-1 focus:ring-[#0fa8e2]";
-
   return (
-    <div className="relative min-h-screen w-full overflow-hidden bg-[#47494a]">
-      {/* Background image */}
-      <div
-        className="absolute inset-0 bg-cover bg-center opacity-50"
-        style={{
-          backgroundImage: "url('/backgroundlogin.png')",
-        }}
-      />
+    <div className="relative min-h-screen w-full overflow-hidden bg-[#030711]">
+      {/* Background gradient mesh */}
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute top-1/3 left-1/3 h-[40rem] w-[40rem] rounded-full bg-cyan-500/8 blur-[140px]" />
+        <div className="absolute bottom-1/3 right-1/4 h-[35rem] w-[35rem] rounded-full bg-sky-500/6 blur-[140px]" />
+        <div
+          className="absolute inset-0 bg-cover bg-center opacity-15"
+          style={{ backgroundImage: "url('/backgroundlogin.png')" }}
+        />
+      </div>
 
-      {/* Content overlay */}
       <div className="relative z-10 flex min-h-screen flex-col">
         {/* Logo */}
-        <div className="flex items-center gap-2 px-8 pt-8 md:px-16">
-          <Link href="/" className="flex items-center gap-2">
-            <div className="flex h-9 w-9 items-center justify-center rounded-md bg-white">
-              <span className="text-lg font-bold text-[#0fa8e2]">T</span>
+        <div className="flex items-center gap-3 px-8 pt-8 md:px-16">
+          <Link href="/" className="flex items-center gap-3 group">
+            <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-cyan-400 to-sky-600 flex items-center justify-center shadow-[0_6px_18px_rgba(6,182,212,0.30)] transition-shadow group-hover:shadow-[0_8px_24px_rgba(6,182,212,0.40)]">
+              <span className="text-white font-bold text-base">T</span>
             </div>
-            <span className="text-[25px] font-bold text-white">Tenrent</span>
+            <span className="text-white font-semibold text-lg tracking-tight">
+              TenRent
+            </span>
           </Link>
         </div>
 
-        {/* Main content area */}
+        {/* Main content */}
         <div className="flex flex-1 flex-col items-center justify-center gap-8 px-8 py-8 md:flex-row md:items-center md:justify-between md:px-16 lg:px-24">
-          {/* Left text */}
-          <h1 className="hidden text-[50px] font-bold uppercase leading-tight text-white md:block">
-            Find your
-            <br />
-            next home
-          </h1>
+          {/* Left heading */}
+          <div className="hidden md:block">
+            <h1 className="ds-h3 leading-[1.1]">
+              Find your
+              <br />
+              next home
+            </h1>
+            <p className="ds-body mt-4 max-w-sm">
+              Create your account and start exploring premium rental properties.
+            </p>
+          </div>
 
           {/* Sign Up Card */}
-          <div className="w-full max-w-96 rounded-[10px] bg-[#c4c2c2]/85 p-9 backdrop-blur-sm md:mr-8 lg:mr-16">
+          <div className="w-full max-w-md ds-card-lg p-8 md:mr-8 lg:mr-16">
             <div className="mb-6 text-center">
-              <h2 className="text-[16px] font-bold text-[#09090b]">SIGN UP</h2>
-              <p className="mt-2 text-[12px] text-black">
+              <h2 className="ds-headline font-semibold">Sign Up</h2>
+              <p className="ds-small mt-2">
                 Create your TenRent account
               </p>
             </div>
 
             {fromGoogle && (
-              <div className="mb-3 rounded-md border border-blue-200 bg-blue-50 px-3 py-2 text-[12px] text-blue-700">
+              <div className="mb-3 ds-pill-cyan px-3 py-2 rounded-lg text-[12px]">
                 We couldn&apos;t find an existing account for that Google email.
                 Please complete sign up first to choose your role.
               </div>
@@ -194,7 +197,7 @@ export default function SignUpPage() {
               type="button"
               onClick={handleGoogleSignUp}
               disabled={loading}
-              className="mb-3 flex w-full items-center justify-center gap-2 rounded-lg border border-[#808080] bg-white px-2.5 py-2 shadow-[0px_1px_2px_0px_rgba(0,0,0,0.11)] transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+              className="ds-btn ds-btn-ghost w-full h-10 rounded-lg text-[13px] mb-3 disabled:opacity-50"
             >
               <svg className="h-4 w-4" viewBox="0 0 24 24">
                 <path
@@ -214,112 +217,96 @@ export default function SignUpPage() {
                   fill="#EA4335"
                 />
               </svg>
-              <span className="text-[12px] text-[#52525b]">
+              <span>
                 {loading ? "Creating Account..." : "Continue with Google"}
               </span>
             </button>
 
             {/* Divider */}
-            <div className="my-3 flex items-center gap-4">
-              <div className="h-px flex-1 bg-[#e5e5e5]" />
-              <span className="text-[12px] text-[#52525b]">or</span>
-              <div className="h-px flex-1 bg-[#e5e5e5]" />
+            <div className="my-4 flex items-center gap-4">
+              <div className="h-px flex-1 bg-white/10" />
+              <span className="ds-small">or</span>
+              <div className="h-px flex-1 bg-white/10" />
             </div>
 
-            {/* Form */}
+            {/* Error */}
             {error && (
-              <div className="mb-3 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-[12px] text-red-600">
+              <div className="mb-3 ds-pill-red px-3 py-2 rounded-lg text-[12px]">
                 {error}
               </div>
             )}
 
+            {/* Form */}
             <form onSubmit={handleSubmit} className="space-y-3">
-              {/* User type */}
               <div>
-                <label className="mb-1 block text-[12px] font-bold text-[#52525b]">
-                  I am a
-                </label>
+                <label className="ds-input-label">I am a</label>
                 <select
                   name="user_type"
                   value={formData.user_type}
                   onChange={handleChange}
                   required
-                  className={inputClass}
+                  className="ds-input"
                 >
-                  <option value="">Select an Option</option>
-                  <option value="renter">
+                  <option value="" className="bg-[#0b1320]">Select an Option</option>
+                  <option value="renter" className="bg-[#0b1320]">
                     Renter (Looking for properties)
                   </option>
-                  <option value="landlord">
+                  <option value="landlord" className="bg-[#0b1320]">
                     Landlord (Listing properties)
                   </option>
                 </select>
               </div>
 
-              {/* Name row */}
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="mb-1 block text-[12px] font-bold text-[#52525b]">
-                    First Name
-                  </label>
+                  <label className="ds-input-label">First Name</label>
                   <input
                     type="text"
                     name="first_name"
                     value={formData.first_name}
                     onChange={handleChange}
                     required
-                    className={inputClass}
+                    className="ds-input"
                   />
                 </div>
                 <div>
-                  <label className="mb-1 block text-[12px] font-bold text-[#52525b]">
-                    Last Name
-                  </label>
+                  <label className="ds-input-label">Last Name</label>
                   <input
                     type="text"
                     name="last_name"
                     value={formData.last_name}
                     onChange={handleChange}
                     required
-                    className={inputClass}
+                    className="ds-input"
                   />
                 </div>
               </div>
 
-              {/* Email */}
               <div>
-                <label className="mb-1 block text-[12px] font-bold text-[#52525b]">
-                  Email Address
-                </label>
+                <label className="ds-input-label">Email Address</label>
                 <input
                   type="email"
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
                   required
-                  className={inputClass}
+                  className="ds-input"
                 />
               </div>
 
-              {/* Phone */}
               <div>
-                <label className="mb-1 block text-[12px] font-bold text-[#52525b]">
-                  Phone (Optional)
-                </label>
+                <label className="ds-input-label">Phone (Optional)</label>
                 <input
                   type="tel"
                   name="phone"
                   value={formData.phone}
                   onChange={handleChange}
-                  className={inputClass}
+                  className="ds-input"
                 />
               </div>
 
-              {/* Password */}
               <div>
-                <label className="mb-1 block text-[12px] font-bold text-[#52525b]">
-                  Password (min 8 characters)
-                </label>
+                <label className="ds-input-label">Password (min 8 characters)</label>
                 <input
                   type="password"
                   name="password"
@@ -327,38 +314,35 @@ export default function SignUpPage() {
                   onChange={handleChange}
                   required
                   minLength={8}
-                  className={inputClass}
+                  className="ds-input"
                 />
               </div>
 
-              {/* Confirm Password */}
               <div>
-                <label className="mb-1 block text-[12px] font-bold text-[#52525b]">
-                  Confirm Password
-                </label>
+                <label className="ds-input-label">Confirm Password</label>
                 <input
                   type="password"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   required
-                  className={inputClass}
+                  className="ds-input"
                 />
               </div>
 
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full rounded-lg border border-[#0a0a0a] bg-[#0a0a0a] px-2.5 py-2 text-[12px] font-bold text-[#fafafa] shadow-[0px_1px_2px_0px_rgba(0,0,0,0.11)] transition-colors hover:bg-[#1a1a1a] disabled:cursor-not-allowed disabled:opacity-50"
+                className="ds-btn ds-btn-primary w-full h-10 rounded-lg text-[13px] disabled:opacity-50"
               >
                 {loading ? "Creating Account..." : "Continue"}
               </button>
             </form>
 
-            <p className="mt-4 text-center text-[12px] text-[#404040]">
+            <p className="mt-5 text-center ds-small">
               Already have an account?{" "}
               <Link
                 href="/signin"
-                className="font-bold text-[#09090b] hover:underline"
+                className="text-cyan-300 font-medium hover:text-cyan-200 transition-colors"
               >
                 Sign in
               </Link>

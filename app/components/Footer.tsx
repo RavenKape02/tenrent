@@ -1,122 +1,136 @@
+import Link from "next/link";
 import SocialButton from "./SocialButton";
 
 export default function Footer() {
   return (
-    <footer className="relative z-10 mt-8 border-t border-white/10 bg-[#050c19]/75 backdrop-blur-xl pt-16 pb-8">
+    <footer className="relative z-10 mt-8">
       <div className="max-w-7xl mx-auto px-6 md:px-24">
-        <div className="grid md:grid-cols-4 gap-12 mb-12">
-          <div>
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-11 h-11 bg-linear-to-br from-cyan-400 to-sky-600 rounded-xl flex items-center justify-center shadow-[0_10px_30px_rgba(14,165,233,0.35)]">
-                <span className="text-white font-bold text-xl">T</span>
+        {/* Divider */}
+        <div className="h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+
+        <div className="pt-16 pb-8">
+          <div className="grid md:grid-cols-4 gap-12 mb-12">
+            {/* Brand */}
+            <div>
+              <div className="flex items-center gap-3 mb-5">
+                <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-cyan-400 to-sky-600 flex items-center justify-center shadow-[0_6px_18px_rgba(6,182,212,0.30)]">
+                  <span className="text-white font-bold text-base">T</span>
+                </div>
+                <span className="text-white font-semibold text-lg tracking-tight">
+                  TenRent
+                </span>
               </div>
-              <span className="text-white font-semibold text-xl">TenRent</span>
+              <p className="ds-footnote mb-6 leading-relaxed max-w-[220px]">
+                Transparent bidding marketplace
+                <br />
+                for competitive rental markets
+              </p>
+              <div className="flex gap-2">
+                <SocialButton icon="facebook" />
+                <SocialButton icon="twitter" />
+                <SocialButton icon="instagram" />
+                <SocialButton icon="dribbble" />
+              </div>
             </div>
-            <p className="text-slate-300 text-sm mb-6 leading-relaxed">
-              Transparent bidding marketplace
-              <br />
-              for competitive rental markets
+
+            {/* Useful Links */}
+            <div>
+              <h3 className="ds-caption uppercase tracking-[0.12em] text-white/90 mb-5 font-semibold">
+                Useful Links
+              </h3>
+              <ul className="space-y-3">
+                <li>
+                  <Link
+                    href="#"
+                    className="ds-footnote hover:text-cyan-300 transition-colors duration-200"
+                  >
+                    About
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="#"
+                    className="ds-footnote hover:text-cyan-300 transition-colors duration-200"
+                  >
+                    Partners
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="#"
+                    className="ds-footnote hover:text-cyan-300 transition-colors duration-200"
+                  >
+                    Contact
+                  </Link>
+                </li>
+              </ul>
+            </div>
+
+            {/* Help */}
+            <div>
+              <h3 className="ds-caption uppercase tracking-[0.12em] text-white/90 mb-5 font-semibold">
+                Help
+              </h3>
+              <ul className="space-y-3">
+                <li>
+                  <Link
+                    href="#"
+                    className="ds-footnote hover:text-cyan-300 transition-colors duration-200"
+                  >
+                    FAQ
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="#"
+                    className="ds-footnote hover:text-cyan-300 transition-colors duration-200"
+                  >
+                    How Bidding Works
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="#"
+                    className="ds-footnote hover:text-cyan-300 transition-colors duration-200"
+                  >
+                    Terms & Conditions
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="#"
+                    className="ds-footnote hover:text-cyan-300 transition-colors duration-200"
+                  >
+                    Privacy Policy
+                  </Link>
+                </li>
+              </ul>
+            </div>
+
+            {/* Address */}
+            <div>
+              <h3 className="ds-caption uppercase tracking-[0.12em] text-white/90 mb-5 font-semibold">
+                Address
+              </h3>
+              <ul className="space-y-3">
+                <li className="ds-footnote">113-115 Old Brompton Road</li>
+                <li className="ds-footnote">SW7 3LE LONDON, UNITED KINGDOM</li>
+                <li className="ds-footnote">website: www.tenrent.com</li>
+                <li className="ds-footnote">mobile</li>
+              </ul>
+            </div>
+          </div>
+
+          {/* Bottom bar */}
+          <div className="h-px bg-gradient-to-r from-transparent via-white/8 to-transparent" />
+          <div className="pt-6 flex flex-col md:flex-row justify-between items-center">
+            <p className="ds-small">
+              © Copyright 2026, TenRent.com
             </p>
-            <div className="flex gap-3">
-              <SocialButton icon="facebook" />
-              <SocialButton icon="twitter" />
-              <SocialButton icon="instagram" />
-              <SocialButton icon="dribbble" />
-            </div>
+            <p className="ds-small mt-4 md:mt-0">
+              Terms & Condition | Privacy Policy
+            </p>
           </div>
-
-          <div>
-            <h3 className="text-white font-medium mb-4 uppercase tracking-[0.08em] text-sm">
-              Useful Links
-            </h3>
-            <ul className="space-y-3">
-              <li>
-                <a
-                  href="#"
-                  className="text-slate-300 hover:text-cyan-200 text-sm transition-colors"
-                >
-                  About
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="text-slate-300 hover:text-cyan-200 text-sm transition-colors"
-                >
-                  Partners
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="text-slate-300 hover:text-cyan-200 text-sm transition-colors"
-                >
-                  Contact
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          <div>
-            <h3 className="text-white font-medium mb-4 uppercase tracking-[0.08em] text-sm">
-              Help
-            </h3>
-            <ul className="space-y-3">
-              <li>
-                <a
-                  href="#"
-                  className="text-slate-300 hover:text-cyan-200 text-sm transition-colors"
-                >
-                  FAQ
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="text-slate-300 hover:text-cyan-200 text-sm transition-colors"
-                >
-                  How Bidding Works
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="text-slate-300 hover:text-cyan-200 text-sm transition-colors"
-                >
-                  Term & Condition
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="text-slate-300 hover:text-cyan-200 text-sm transition-colors"
-                >
-                  Privacy Policy
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          <div>
-            <h3 className="text-white font-medium mb-4 uppercase tracking-[0.08em] text-sm">
-              Address
-            </h3>
-            <ul className="space-y-3 text-slate-300 text-sm">
-              <li>113-115 Old Brompton Road</li>
-              <li>SW7 3LE LONDON, UNITED KINGDOM</li>
-              <li>website :www.mordern.com</li>
-              <li>mobile</li>
-            </ul>
-          </div>
-        </div>
-
-        <div className="border-t border-white/10 pt-6 flex flex-col md:flex-row justify-between items-center">
-          <p className="text-slate-400 text-sm">
-            © Copyright 2026, TenRent.com
-          </p>
-          <p className="text-slate-400 text-sm mt-4 md:mt-0">
-            Terms & Condition | Privacy Policy
-          </p>
         </div>
       </div>
     </footer>

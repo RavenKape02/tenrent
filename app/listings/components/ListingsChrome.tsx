@@ -17,9 +17,9 @@ export function ListingsShell({
   return (
     <div className="min-h-screen bg-[#05090f] text-slate-100 relative overflow-x-clip">
       <div className="pointer-events-none absolute inset-0">
-        <div className="absolute -top-28 -left-20 h-96 w-96 rounded-full bg-cyan-500/20 blur-3xl" />
-        <div className="absolute top-40 -right-20 h-80 w-80 rounded-full bg-sky-400/15 blur-3xl" />
-        <div className="absolute bottom-0 left-1/2 h-80 w-80 -translate-x-1/2 rounded-full bg-teal-500/10 blur-3xl" />
+        <div className="absolute -top-28 -left-20 h-96 w-96 rounded-full bg-cyan-500/15 blur-[120px]" />
+        <div className="absolute top-40 -right-20 h-80 w-80 rounded-full bg-sky-500/10 blur-[120px]" />
+        <div className="absolute bottom-0 left-1/2 h-80 w-80 -translate-x-1/2 rounded-full bg-teal-500/8 blur-[120px]" />
       </div>
 
       <Header />
@@ -44,12 +44,7 @@ interface ListingsCardProps {
 
 export function ListingsCard({ children, className }: ListingsCardProps) {
   return (
-    <section
-      className={cn(
-        "rounded-2xl border border-white/10 bg-[#0b1320]/85 backdrop-blur-sm p-6 shadow-[0_12px_50px_rgba(2,6,23,0.55)]",
-        className,
-      )}
-    >
+    <section className={cn("ds-card-lg p-6", className)}>
       {children}
     </section>
   );
@@ -68,8 +63,8 @@ export function ListingsCenteredState({
 }: ListingsCenteredStateProps) {
   return (
     <ListingsCard className="text-center py-12">
-      <p className="text-xl font-semibold text-white">{title}</p>
-      {description && <p className="text-slate-300 mt-2">{description}</p>}
+      <p className="ds-headline">{title}</p>
+      {description && <p className="ds-body mt-2">{description}</p>}
       {action && <div className="mt-6">{action}</div>}
     </ListingsCard>
   );
@@ -78,7 +73,7 @@ export function ListingsCenteredState({
 export function ListingsSpinner() {
   return (
     <div className="flex justify-center py-20">
-      <div className="animate-spin rounded-full h-12 w-12 border-2 border-cyan-400/25 border-t-cyan-300" />
+      <div className="w-10 h-10 rounded-full border-2 border-cyan-400/20 border-t-cyan-400 animate-spin" />
     </div>
   );
 }
@@ -98,7 +93,7 @@ export function ListingsBackLink({
     <Link
       href={href}
       className={cn(
-        "inline-flex items-center gap-2 text-slate-300 hover:text-white transition-colors",
+        "inline-flex items-center gap-2 ds-footnote text-white/60 hover:text-white transition-colors",
         className,
       )}
     >

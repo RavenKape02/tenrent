@@ -13,88 +13,88 @@ export default function Header() {
   const isLandlordDashboardActive = pathname.startsWith("/landlord");
   const isRenterDashboardActive = pathname.startsWith("/renter");
 
-  return (
-    <header className="sticky top-0 z-20 border-b border-white/10 bg-[#070c14]/80 backdrop-blur-xl">
-      <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center relative z-10">
-        <Link href="/" className="flex items-center gap-3">
-          <div className="w-11 h-11 bg-linear-to-br from-cyan-400 to-sky-600 rounded-xl flex items-center justify-center shadow-[0_10px_30px_rgba(14,165,233,0.35)]">
-            <span className="text-white font-black text-xl">T</span>
-          </div>
-          <span className="text-slate-100 font-semibold text-2xl tracking-tight">
-            TenRent
-          </span>
-        </Link>
+  const navLinkClass = (active: boolean) =>
+    `relative px-3 py-2 rounded-lg text-[14px] font-medium transition-all duration-200 ${
+      active
+        ? "text-[#67e8f9] bg-white/[0.08]"
+        : "text-[rgba(255,255,255,0.7)] hover:text-white hover:bg-white/[0.05]"
+    }`;
 
-        <nav className="flex items-center gap-6">
-          <Link
-            href="/"
-            className={`transition-colors ${
-              isHomeActive
-                ? "text-cyan-300 font-semibold"
-                : "text-slate-300 hover:text-white"
-            }`}
-          >
-            Home
+  return (
+    <header className="sticky top-0 z-50 w-full">
+      <div className="mx-auto max-w-7xl px-6 pt-4">
+        <div
+          className="flex items-center justify-between rounded-[10px] px-5 py-3"
+          style={{
+            background: "rgba(11, 19, 32, 0.80)",
+            border: "1px solid rgba(255, 255, 255, 0.10)",
+            backdropFilter: "blur(20px)",
+            WebkitBackdropFilter: "blur(20px)",
+            boxShadow:
+              "0 10px 10px rgba(0,0,0,0.10), 0 4px 4px rgba(0,0,0,0.05), 0 1px 0 rgba(0,0,0,0.05)",
+          }}
+        >
+          <Link href="/" className="flex items-center gap-3 group">
+            <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-cyan-400 to-sky-600 flex items-center justify-center shadow-[0_6px_18px_rgba(6,182,212,0.35)] transition-shadow group-hover:shadow-[0_8px_24px_rgba(6,182,212,0.45)]">
+              <span className="text-white font-bold text-base">T</span>
+            </div>
+            <span className="text-white font-semibold text-lg tracking-tight">
+              TenRent
+            </span>
           </Link>
-          <Link
-            href="/listings"
-            className={`transition-colors ${
-              isListingsActive
-                ? "text-cyan-300 font-semibold"
-                : "text-slate-300 hover:text-white"
-            }`}
-          >
-            Browse Listings
-          </Link>
-          {user ? (
-            <>
-              {isLandlord ? (
-                <Link
-                  href="/landlord"
-                  className={`transition-colors ${
-                    isLandlordDashboardActive
-                      ? "text-cyan-300 font-semibold"
-                      : "text-slate-300 hover:text-white"
-                  }`}
-                >
-                  Landlord Dashboard
-                </Link>
-              ) : (
-                <Link
-                  href="/renter"
-                  className={`transition-colors ${
-                    isRenterDashboardActive
-                      ? "text-cyan-300 font-semibold"
-                      : "text-slate-300 hover:text-white"
-                  }`}
-                >
-                  My Bids
-                </Link>
-              )}
-              {isLandlord && (
-                <Link
-                  href="/landlord/listings/new"
-                  className="bg-white/10 border border-white/20 text-cyan-200 px-4 py-2 rounded-xl font-semibold hover:bg-white/15 hover:border-cyan-300/40 transition-all"
-                >
-                  + Create Listing
-                </Link>
-              )}
-              <button
-                onClick={logout}
-                className="bg-white/5 border border-white/20 text-slate-200 px-4 py-2 rounded-xl font-semibold hover:bg-white/10 hover:text-white transition-all"
-              >
-                Logout
-              </button>
-            </>
-          ) : (
-            <Link
-              href="/signin"
-              className="bg-linear-to-r from-cyan-500 to-sky-600 text-white px-4 py-2 rounded-xl font-semibold hover:from-cyan-400 hover:to-sky-500 transition-all"
-            >
-              Sign in to bid
+
+          <nav className="flex items-center gap-1">
+            <Link href="/" className={navLinkClass(isHomeActive)}>
+              Home
             </Link>
-          )}
-        </nav>
+            <Link href="/listings" className={navLinkClass(isListingsActive)}>
+              Browse
+            </Link>
+            {user ? (
+              <>
+                {isLandlord ? (
+                  <Link
+                    href="/landlord"
+                    className={navLinkClass(isLandlordDashboardActive)}
+                  >
+                    Dashboard
+                  </Link>
+                ) : (
+                  <Link
+                    href="/renter"
+                    className={navLinkClass(isRenterDashboardActive)}
+                  >
+                    My Bids
+                  </Link>
+                )}
+
+                <div className="w-px h-5 bg-white/10 mx-2" />
+
+                {isLandlord && (
+                  <Link
+                    href="/landlord/listings/new"
+                    className="ds-btn text-[13px] h-9 px-3 bg-gradient-to-r from-cyan-500 to-sky-600 text-white rounded-lg font-medium shadow-[0_4px_14px_rgba(6,182,212,0.30)] hover:shadow-[0_6px_20px_rgba(6,182,212,0.40)] hover:from-cyan-400 hover:to-sky-500 transition-all"
+                  >
+                    <span className="text-base leading-none">+</span> New Listing
+                  </Link>
+                )}
+                <button
+                  onClick={logout}
+                  className="px-3 py-2 text-[13px] font-medium text-[rgba(255,255,255,0.5)] hover:text-white rounded-lg hover:bg-white/[0.05] transition-all duration-200"
+                >
+                  Logout
+                </button>
+              </>
+            ) : (
+              <Link
+                href="/signin"
+                className="ds-btn h-9 px-4 text-[13px] bg-gradient-to-r from-cyan-500 to-sky-600 text-white rounded-lg font-medium shadow-[0_4px_14px_rgba(6,182,212,0.30)] hover:shadow-[0_6px_20px_rgba(6,182,212,0.40)] hover:from-cyan-400 hover:to-sky-500 transition-all"
+              >
+                Sign in
+              </Link>
+            )}
+          </nav>
+        </div>
       </div>
     </header>
   );
