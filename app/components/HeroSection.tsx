@@ -1,150 +1,90 @@
-import Image from "next/image";
-import Link from "next/link";
-
-const heroPoolImage = "/hero1.jpg";
-const heroArchImage1 = "/hero2.jpg";
-const heroArchImage2 = "/hero3.jpg";
-const heroArchImage3 = "/hero4.jpg";
+const headingLines = ["Bid for rentals", "with confidence."];
 
 export default function HeroSection() {
+  let characterIndex = 0;
+
   return (
-    <div className="max-w-7xl mx-auto px-6 md:px-24 py-16 md:py-28">
-      <div className="grid md:grid-cols-2 gap-12 items-center">
-        <div className="relative z-10 ds-fade-in">
-          {/* Badge */}
-          <div className="ds-pill ds-pill-cyan mb-8">
-            <span className="h-1.5 w-1.5 rounded-full bg-cyan-400 animate-pulse" />
-            <span className="text-[12px] uppercase tracking-[0.16em] font-medium">
-              Live Bid Marketplace
-            </span>
-          </div>
-
-          {/* Heading */}
-          <h1 className="ds-h1 text-white leading-[0.95] mb-7">
-            Secure Your Next
-            <br />
-            Home Before It
-            <br />
-            Hits The Crowd
-          </h1>
-
-          {/* Subtitle */}
-          <p className="ds-body max-w-md mb-10">
-            TenRent lets renters and landlords meet in a transparent premium
-            auction flow, where speed and trust decide the best match.
-          </p>
-
-          {/* CTAs */}
-          <div className="flex flex-col sm:flex-row gap-3">
-            <Link
-              href="/listings"
-              className="ds-btn ds-btn-primary h-12 px-6 text-[15px] rounded-[10px]"
-            >
-              <span>Browse Properties</span>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-4 w-4"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M17 8l4 4m0 0l-4 4m4-4H3"
-                />
-              </svg>
-            </Link>
-            <Link
-              href="/signup"
-              className="ds-btn ds-btn-ghost h-12 px-6 text-[15px] rounded-[10px]"
-            >
-              List Your Property
-            </Link>
-          </div>
-        </div>
-
-        {/* Image Grid */}
-        <div className="hidden lg:block relative">
-          {/* Decorative glass panel */}
-          <div
-            className="absolute -top-8 right-0 w-[400px] h-[250px] rounded-[10px]"
-            style={{
-              background: "rgba(255,255,255,0.04)",
-              border: "1px solid rgba(255,255,255,0.08)",
-              backdropFilter: "blur(20px)",
-            }}
+    <section
+      id="home-hero"
+      className="relative min-h-svh overflow-hidden bg-black text-white antialiased"
+      style={{
+        fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif",
+        WebkitFontSmoothing: "antialiased",
+        MozOsxFontSmoothing: "grayscale",
+      }}
+    >
+      <div className="absolute inset-0" aria-hidden>
+        <div className="absolute inset-0 overflow-hidden">
+          <iframe
+            className="pointer-events-none absolute left-1/2 top-1/2 h-[56.25vw] min-h-full w-[177.78vh] min-w-full -translate-x-1/2 -translate-y-1/2"
+            src="https://www.youtube.com/embed/l6EzZafb1Pk?autoplay=1&mute=1&controls=0&rel=0&loop=1&playlist=l6EzZafb1Pk&modestbranding=1&playsinline=1"
+            title="Background Video"
+            allow="autoplay; encrypted-media; picture-in-picture"
           />
+        </div>
+        <div className="absolute inset-0 bg-black/55" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_20%,rgba(255,255,255,0.10),transparent_42%),radial-gradient(circle_at_85%_80%,rgba(255,255,255,0.08),transparent_40%)]" />
+      </div>
 
-          <div className="relative mt-32 grid grid-cols-3 gap-3">
-            <div className="col-span-2 space-y-3">
-              <div className="flex gap-3">
-                <div className="w-32 h-24 rounded-[10px] overflow-hidden border border-white/10">
-                  <Image
-                    src={heroArchImage2}
-                    alt="Property"
-                    width={128}
-                    height={96}
-                    className="w-full h-full object-cover"
-                    unoptimized
-                  />
-                </div>
-                <div className="w-40 h-32 rounded-[10px] overflow-hidden border border-white/10">
-                  <Image
-                    src={heroArchImage1}
-                    alt="Property"
-                    width={160}
-                    height={128}
-                    className="w-full h-full object-cover"
-                    unoptimized
-                  />
-                </div>
+      <div className="relative z-10 flex min-h-svh flex-col px-4 pb-10 pt-28 sm:px-6 sm:pt-32 lg:px-10">
+        <div className="mx-auto flex w-full max-w-7xl flex-1 items-center py-8 sm:py-10 lg:py-14">
+          <div className="grid w-full gap-10 lg:grid-cols-2 lg:items-end">
+            <div className="max-w-3xl">
+              <div
+                className="inline-flex -translate-y-3 rounded-full border border-white/15 bg-white/8 px-4 py-2 text-sm text-white/80 opacity-0 backdrop-blur-sm"
+                style={{ animation: "hero-fade-in 900ms ease forwards 450ms" }}
+              >
+                Rental bidding platform
               </div>
-              <div className="flex gap-3">
-                <div className="w-32 h-32 rounded-[10px] overflow-hidden border border-white/10">
-                  <Image
-                    src={heroArchImage1}
-                    alt="Property"
-                    width={128}
-                    height={128}
-                    className="w-full h-full object-cover"
-                    unoptimized
-                  />
-                </div>
-                <div className="w-40 h-32 rounded-[10px] overflow-hidden border border-white/10">
-                  <Image
-                    src={heroArchImage3}
-                    alt="Property"
-                    width={160}
-                    height={128}
-                    className="w-full h-full object-cover"
-                    unoptimized
-                  />
-                </div>
-              </div>
+
+              <h1 className="text-4xl font-semibold leading-[0.95] tracking-[-0.04em] sm:text-5xl lg:text-6xl xl:text-7xl">
+                {headingLines.map((line, lineIndex) => (
+                  <span key={line} className="block">
+                    {line.split("").map((char) => {
+                      const currentIndex = characterIndex;
+                      characterIndex += 1;
+
+                      return (
+                        <span
+                          key={`${lineIndex}-${currentIndex}`}
+                          className="inline-block opacity-0"
+                          style={{
+                            transform: "translateX(-18px)",
+                            animation: "hero-char-in 500ms ease forwards",
+                            animationDelay: `${200 + currentIndex * 30}ms`,
+                          }}
+                        >
+                          {char === " " ? "\u00A0" : char}
+                        </span>
+                      );
+                    })}
+                  </span>
+                ))}
+              </h1>
+
+              <p
+                className="mt-7 max-w-2xl text-base text-gray-300 opacity-0 sm:text-lg"
+                style={{ animation: "hero-fade-in 1000ms ease forwards 800ms" }}
+              >
+                TenRent helps renters place competitive bids and helps landlords
+                compare offers with clarity, speed, and less back-and-forth.
+              </p>
             </div>
-            <div className="relative rounded-[10px] overflow-hidden h-64 border border-white/15 shadow-[0_20px_50px_rgba(0,0,0,0.4)]">
-              <Image
-                src={heroPoolImage}
-                alt="Pool Property"
-                width={200}
-                height={256}
-                className="w-full h-full object-cover"
-                unoptimized
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-              <div className="absolute inset-0 flex items-end justify-center pb-6">
-                <p className="text-white text-center text-lg font-semibold leading-tight tracking-[-0.02em]">
-                  Make your next move
-                  <br />
-                  with confidence
-                </p>
+
+            <div className="flex min-h-56 items-end justify-start lg:justify-end">
+              <div
+                className="liquid-glass rounded-xl px-5 py-4 text-lg font-light text-white opacity-0 sm:text-xl lg:text-2xl"
+                style={{
+                  animation: "hero-fade-in 1000ms ease forwards 1400ms",
+                  border: "1px solid rgba(255, 255, 255, 0.2)",
+                }}
+              >
+                Fair bids. Clear terms. Faster leasing.
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </section>
   );
 }

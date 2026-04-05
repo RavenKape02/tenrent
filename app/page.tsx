@@ -18,8 +18,9 @@ export default function Home() {
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(255,255,255,0.04),transparent_38%),radial-gradient(circle_at_80%_15%,rgba(6,182,212,0.08),transparent_45%),linear-gradient(180deg,#030711_0%,#050c19_40%,#030711_100%)]" />
       </div>
 
+      <Header />
+
       <section className="relative z-10">
-        <Header />
         <HeroSection />
 
         <div className="max-w-7xl mx-auto px-6 md:px-24 pb-12">
