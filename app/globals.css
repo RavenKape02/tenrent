@@ -389,6 +389,44 @@
   box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.1);
 }
 
+/* Fix for date/datetime inputs to show native pickers */
+.ds-input[type="date"],
+.ds-input[type="datetime-local"],
+.ds-input[type="time"] {
+  color-scheme: light;
+  cursor: pointer;
+  position: relative;
+  background: rgba(255, 255, 255, 0.08);
+  padding-right: 32px;
+}
+
+.ds-input[type="date"]::-webkit-calendar-picker-indicator,
+.ds-input[type="datetime-local"]::-webkit-calendar-picker-indicator,
+.ds-input[type="time"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  opacity: 1;
+  filter: invert(0.8) brightness(1.5);
+  position: absolute;
+  right: 8px;
+  width: 20px;
+  height: 20px;
+  z-index: 10;
+}
+
+.ds-input[type="date"]::-webkit-calendar-picker-indicator:hover,
+.ds-input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover,
+.ds-input[type="time"]::-webkit-calendar-picker-indicator:hover {
+  filter: invert(1) brightness(2);
+  scale: 1.1;
+}
+
+/* Firefox date input support */
+.ds-input[type="date"]::-moz-calendar-picker,
+.ds-input[type="datetime-local"]::-moz-datetime-picker,
+.ds-input[type="time"]::-moz-time-picker {
+  filter: invert(1);
+}
+
 .ds-input-label {
   display: block;
   margin-bottom: 6px;

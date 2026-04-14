@@ -120,14 +120,6 @@ export default function Header() {
 
                 <div className="w-px h-5 bg-white/10 mx-2" />
 
-                {isLandlord && (
-                  <Link
-                    href="/landlord/listings/new"
-                    className="ds-btn text-[13px] h-9 px-3 bg-gradient-to-r from-cyan-500 to-sky-600 text-white rounded-lg font-medium shadow-[0_4px_14px_rgba(6,182,212,0.30)] hover:shadow-[0_6px_20px_rgba(6,182,212,0.40)] hover:from-cyan-400 hover:to-sky-500 transition-all"
-                  >
-                    <span className="text-base leading-none">+</span> New Listing
-                  </Link>
-                )}
                 <button
                   onClick={logout}
                   className="px-3 py-2 text-[13px] font-medium text-[rgba(255,255,255,0.5)] hover:text-white rounded-lg hover:bg-white/[0.05] transition-all duration-200"

@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { useAuth } from '../../../contexts/AuthContext';
 import { listingsAPI, type ListingCreatePayload, type ListingStatus } from '../../../lib/api';
 import { ListingsShell } from '../../../listings/components/ListingsChrome';
+import { UsCityStatePickers } from '../../../components/UsCityStatePickers';
 
 const STATUS_OPTIONS: { value: ListingStatus; label: string }[] = [
   { value: 'draft', label: 'Draft' },
@@ -22,6 +23,7 @@ export default function NewListingPage() {
   const [address_line_1, setAddress_line_1] = useState('');
   const [address_line_2, setAddress_line_2] = useState('');
   const [city, setCity] = useState('');
+  /** US state as 2-letter code (e.g. NY) */
   const [state, setState] = useState('');
   const [zip_code, setZip_code] = useState('');
   const [monthly_rent, setMonthly_rent] = useState('');
@@ -138,16 +140,12 @@ export default function NewListingPage() {
             <label className="ds-input-label">Address line 2 (unit, etc.)</label>
             <input type="text" value={address_line_2} onChange={(e) => setAddress_line_2(e.target.value)} className="ds-input" />
           </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="ds-input-label">City *</label>
-              <input type="text" required value={city} onChange={(e) => setCity(e.target.value)} className="ds-input" />
-            </div>
-            <div>
-              <label className="ds-input-label">State *</label>
-              <input type="text" required value={state} onChange={(e) => setState(e.target.value)} placeholder="e.g. NY" className="ds-input" />
-            </div>
-          </div>
+          <UsCityStatePickers
+            city={city}
+            stateCode={state}
+            onCityChange={setCity}
+            onStateChange={setState}
+          />
           <div>
             <label className="ds-input-label">ZIP code *</label>
             <input type="text" required value={zip_code} onChange={(e) => setZip_code(e.target.value)} className="ds-input max-w-[140px]" />
