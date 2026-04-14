@@ -6,6 +6,7 @@ import Link from "next/link";
 import { authAPI, APIError, UserCreate } from "../lib/api";
 import { useAuth } from "../contexts/AuthContext";
 import { getGoogleIdToken } from "../lib/googleAuth";
+import TenRentLogo from "../components/TenRentLogo";
 
 type SignUpFormData = Omit<UserCreate, "user_type"> & {
   user_type: UserCreate["user_type"] | "";
@@ -153,8 +154,8 @@ export default function SignUpPage() {
         {/* Logo */}
         <div className="flex items-center gap-3 px-8 pt-8 md:px-16">
           <Link href="/" className="flex items-center gap-3 group">
-            <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-cyan-400 to-sky-600 flex items-center justify-center shadow-[0_6px_18px_rgba(6,182,212,0.30)] transition-shadow group-hover:shadow-[0_8px_24px_rgba(6,182,212,0.40)]">
-              <span className="text-white font-bold text-base">T</span>
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 bg-white/[0.06] shadow-[0_6px_18px_rgba(6,182,212,0.12)] transition-shadow group-hover:shadow-[0_8px_24px_rgba(6,182,212,0.18)]">
+              <TenRentLogo />
             </div>
             <span className="text-white font-semibold text-lg tracking-tight">
               TenRent

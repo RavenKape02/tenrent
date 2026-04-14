@@ -1,5 +1,6 @@
 import Link from "next/link";
 import SocialButton from "./SocialButton";
+import TenRentLogo from "./TenRentLogo";
 
 export default function Footer() {
   return (
@@ -13,8 +14,8 @@ export default function Footer() {
             {/* Brand */}
             <div>
               <div className="flex items-center gap-3 mb-5">
-                <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-cyan-400 to-sky-600 flex items-center justify-center shadow-[0_6px_18px_rgba(6,182,212,0.30)]">
-                  <span className="text-white font-bold text-base">T</span>
+                <div className="flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 bg-white/[0.06] shadow-[0_6px_18px_rgba(6,182,212,0.12)]">
+                  <TenRentLogo />
                 </div>
                 <span className="text-white font-semibold text-lg tracking-tight">
                   TenRent
