@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "./contexts/AuthContext";
+import { PhotoTransitionProvider } from "./contexts/PhotoTransitionContext";
+import PhotoTransitionOverlay from "./components/PhotoTransitionOverlay";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -25,7 +27,12 @@ export default function RootLayout({
       <body
         className={`${inter.variable} antialiased font-[family-name:var(--font-inter)]`}
       >
-        <AuthProvider>{children}</AuthProvider>
+        <AuthProvider>
+          <PhotoTransitionProvider>
+            {children}
+            <PhotoTransitionOverlay />
+          </PhotoTransitionProvider>
+        </AuthProvider>
       </body>
     </html>
   );

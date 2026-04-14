@@ -367,7 +367,10 @@
 .ds-input {
   width: 100%;
   height: 40px;
-  padding: 0 12px;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 12px;
+  padding-right: 12px;
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid var(--ds-container-border);
   border-radius: var(--ds-radius-sm);
@@ -382,6 +385,12 @@
 
 .ds-input::placeholder {
   color: var(--ds-fg-tertiary);
+}
+
+textarea.ds-input {
+  height: auto;
+  vertical-align: top;
+  resize: vertical;
 }
 
 .ds-input:focus {
