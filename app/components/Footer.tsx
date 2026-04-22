@@ -42,7 +42,7 @@ export default function Footer() {
               <ul className="space-y-3">
                 <li>
                   <Link
-                    href="#"
+                    href="/about"
                     className="ds-footnote hover:text-cyan-300 transition-colors duration-200"
                   >
                     About
@@ -50,7 +50,7 @@ export default function Footer() {
                 </li>
                 <li>
                   <Link
-                    href="#"
+                    href="/partners"
                     className="ds-footnote hover:text-cyan-300 transition-colors duration-200"
                   >
                     Partners
@@ -58,7 +58,7 @@ export default function Footer() {
                 </li>
                 <li>
                   <Link
-                    href="#"
+                    href="/contact"
                     className="ds-footnote hover:text-cyan-300 transition-colors duration-200"
                   >
                     Contact
@@ -75,7 +75,7 @@ export default function Footer() {
               <ul className="space-y-3">
                 <li>
                   <Link
-                    href="#"
+                    href="/faq"
                     className="ds-footnote hover:text-cyan-300 transition-colors duration-200"
                   >
                     FAQ
@@ -83,7 +83,7 @@ export default function Footer() {
                 </li>
                 <li>
                   <Link
-                    href="#"
+                    href="/how-bidding-works"
                     className="ds-footnote hover:text-cyan-300 transition-colors duration-200"
                   >
                     How Bidding Works
@@ -91,7 +91,7 @@ export default function Footer() {
                 </li>
                 <li>
                   <Link
-                    href="#"
+                    href="/terms"
                     className="ds-footnote hover:text-cyan-300 transition-colors duration-200"
                   >
                     Terms & Conditions
@@ -99,7 +99,7 @@ export default function Footer() {
                 </li>
                 <li>
                   <Link
-                    href="#"
+                    href="/privacy"
                     className="ds-footnote hover:text-cyan-300 transition-colors duration-200"
                   >
                     Privacy Policy
