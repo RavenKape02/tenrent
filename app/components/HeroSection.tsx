@@ -15,12 +15,15 @@ export default function HeroSection() {
     >
       <div className="absolute inset-0" aria-hidden>
         <div className="absolute inset-0 overflow-hidden">
-          <iframe
-            className="pointer-events-none absolute left-1/2 top-1/2 h-[56.25vw] min-h-full w-[177.78vh] min-w-full -translate-x-1/2 -translate-y-1/2"
-            src="https://www.youtube.com/embed/l6EzZafb1Pk?autoplay=1&mute=1&controls=0&rel=0&loop=1&playlist=l6EzZafb1Pk&modestbranding=1&playsinline=1"
-            title="Background Video"
-            allow="autoplay; encrypted-media; picture-in-picture"
-          />
+          <video
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="pointer-events-none h-full w-full object-cover"
+          >
+            <source src="/herovideo.mp4" type="video/mp4" />
+          </video>
         </div>
         <div className="absolute inset-0 bg-black/55" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_20%,rgba(255,255,255,0.10),transparent_42%),radial-gradient(circle_at_85%_80%,rgba(255,255,255,0.08),transparent_40%)]" />
